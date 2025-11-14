@@ -1,0 +1,27 @@
+slug: building-local-ai
+title: Building Local AI with Intention
+date: 2025-11-10
+author: Maya Chen
+readingTime: 5
+summary: How we think about bringing powerful assistants directly onto personal devices without compromising calm or privacy.
+tags:
+  - Behind the scenes
+  - Product
+content: |
+  ## Why local matters
+  The closer intelligence lives to the person using it, the less it has to borrow context
+  or leak information. We start every prototype by asking _what needs to stay on device_,
+  not _what can we cache in the cloud_.
+
+  - Local-first keeps latency down.
+  - Local-first makes trust tangible.
+  - Local-first encourages better product decisions.
+
+  ## Craft over hype
+  We're intentionally shipping small surfaces first. That means tight instrumentation,
+  lots of manual onboarding, and an obsessive focus on how calm the product feels day to day.
+
+  ## What's next
+  We'll continue sharing in-progress notes here. If you're curious about the beta,
+  email [support@projxon.ai](mailto:support@projxon.ai) and tell us a bit about your work.
+

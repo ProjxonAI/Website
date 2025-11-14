@@ -1,0 +1,190 @@
+// ===================================
+// BASE STYLES
+// ===================================
+
+@use "variables" as *;
+@use "mixins" as *;
+
+// ===================================
+// RESET & NORMALIZE
+// ===================================
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	@include smooth-scroll;
+	font-size: 16px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+body {
+	font-family: $font-primary;
+	font-size: $font-size-base;
+	font-weight: $font-weight-normal;
+	line-height: $line-height-normal;
+	color: $text-primary;
+	background-color: $bg-primary;
+	overflow-x: hidden;
+}
+
+.page {
+	min-height: 100vh;
+}
+
+.page--dark {
+	background-color: #050509;
+	scroll-snap-type: y mandatory;
+	scroll-padding-top: 80px;
+}
+
+.page--light {
+	background-color: $bg-primary;
+}
+
+.snap-section {
+	scroll-snap-align: start;
+	scroll-margin-top: 80px;
+	scroll-snap-stop: always;
+}
+
+a,
+button {
+	transition: color $transition-fast, background-color $transition-fast,
+		border-color $transition-fast, transform $transition-base,
+		opacity $transition-fast;
+}
+
+// ===================================
+// TYPOGRAPHY
+// ===================================
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: $font-display;
+	font-weight: $font-weight-bold;
+	line-height: $line-height-tight;
+	color: $text-primary;
+	margin-bottom: $space-4;
+}
+
+h1 {
+	font-size: $font-size-4xl;
+	font-weight: $font-weight-extrabold;
+
+	@include respond-to(md) {
+		font-size: $font-size-5xl;
+	}
+
+	@include respond-to(lg) {
+		font-size: $font-size-6xl;
+	}
+}
+
+h2 {
+	font-size: $font-size-3xl;
+
+	@include respond-to(md) {
+		font-size: $font-size-4xl;
+	}
+}
+
+h3 {
+	font-size: $font-size-2xl;
+
+	@include respond-to(md) {
+		font-size: $font-size-3xl;
+	}
+}
+
+h4 {
+	font-size: $font-size-xl;
+
+	@include respond-to(md) {
+		font-size: $font-size-2xl;
+	}
+}
+
+h5 {
+	font-size: $font-size-lg;
+}
+
+h6 {
+	font-size: $font-size-base;
+}
+
+p {
+	margin-bottom: $space-4;
+	color: $text-secondary;
+	line-height: $line-height-relaxed;
+}
+
+a {
+	color: $primary-base;
+	text-decoration: none;
+	transition: color $transition-fast;
+
+	&:hover {
+		color: $primary-dark;
+	}
+}
+
+strong,
+b {
+	font-weight: $font-weight-semibold;
+}
+
+code {
+	font-family: $font-mono;
+	font-size: 0.875em;
+	background-color: $neutral-100;
+	padding: $space-1 $space-2;
+	border-radius: $radius-sm;
+	color: $primary-dark;
+}
+
+// ===================================
+// CONTAINER
+// ===================================
+.container {
+	@include container;
+}
+
+// ===================================
+// UTILITY CLASSES
+// ===================================
+.text-center {
+	text-align: center;
+}
+
+.text-primary {
+	color: $primary-base;
+}
+
+.text-secondary {
+	color: $text-secondary;
+}
+
+.gradient-text {
+	@include gradient-text;
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border-width: 0;
+}

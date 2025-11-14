@@ -1,0 +1,477 @@
+// ===================================
+// PROJXON AI - MAIN STYLESHEET
+// ===================================
+
+// Core System
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'base';
+@use 'components';
+@use 'blog';
+
+// Import Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+// ===================================
+// PAGE-SPECIFIC STYLES
+// ===================================
+
+// Hero Section
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 72px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #040405 0%, #09090f 60%, #0d0e14 100%);
+  color: $text-inverse;
+  
+  &__container {
+    @include container;
+    position: relative;
+    z-index: 2;
+  }
+  
+  &__content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    padding: $space-12 0;
+  }
+  
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    padding: $space-2 $space-4;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    border-radius: $radius-full;
+    margin-bottom: $space-6;
+    animation: fadeInUp 0.6s ease-out;
+  }
+  
+  &__title {
+    font-size: $font-size-4xl;
+    font-weight: $font-weight-extrabold;
+    line-height: $line-height-tight;
+    margin-bottom: $space-6;
+    color: $text-inverse;
+    animation: fadeInUp 0.6s ease-out 0.1s backwards;
+    
+    @include respond-to(md) {
+      font-size: $font-size-5xl;
+    }
+    
+    @include respond-to(lg) {
+      font-size: $font-size-6xl;
+    }
+  }
+  
+  &__description {
+    font-size: $font-size-lg;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: $space-8;
+    line-height: $line-height-relaxed;
+    animation: fadeInUp 0.6s ease-out 0.2s backwards;
+    
+    @include respond-to(md) {
+      font-size: $font-size-xl;
+    }
+  }
+  
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-4;
+    justify-content: center;
+    animation: fadeInUp 0.6s ease-out 0.3s backwards;
+  }
+  
+  // Background decorations
+  &__bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    z-index: 1;
+    
+    &-circle {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 70%);
+      
+      &--1 {
+        width: 440px;
+        height: 440px;
+        top: -220px;
+        right: -120px;
+        animation: float 20s ease-in-out infinite;
+      }
+      
+      &--2 {
+        width: 360px;
+        height: 360px;
+        bottom: 40px;
+        left: -60px;
+        animation: float 18s ease-in-out infinite reverse;
+      }
+      
+      &--3 {
+        width: 260px;
+        height: 260px;
+        top: 45%;
+        left: 12%;
+        animation: float 22s ease-in-out infinite;
+      }
+    }
+  }
+}
+
+// Features Section
+.features {
+  &__grid {
+    display: grid;
+    gap: $space-6;
+    
+    @include respond-to(md) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: $space-8;
+    }
+    
+    @include respond-to(lg) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  &__item {
+    padding: $space-8;
+    background-color: $bg-primary;
+    border: 1px solid $border-light;
+    border-radius: $radius-lg;
+    transition: border-color $transition-base, box-shadow $transition-base, transform $transition-base;
+    
+    &:hover {
+      border-color: $primary-light;
+      box-shadow: $shadow-lg;
+      transform: translateY(-4px);
+    }
+  }
+  
+  &__icon {
+    @include flex-center;
+    width: 56px;
+    height: 56px;
+    margin-bottom: $space-4;
+    border-radius: $radius-lg;
+    background: linear-gradient(135deg, $primary-lighter 0%, $secondary-light 100%);
+    font-size: $font-size-2xl;
+  }
+  
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    margin-bottom: $space-3;
+  }
+  
+  &__description {
+    color: $text-secondary;
+    margin-bottom: 0;
+  }
+}
+
+// CTA Section
+.cta {
+  background: linear-gradient(135deg, $primary-base 0%, $secondary-base 100%);
+  color: $text-inverse;
+  border-radius: $radius-xl;
+  padding: $space-16 $space-6;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  
+  @include respond-to(md) {
+    padding: $space-20 $space-12;
+  }
+  
+  &__content {
+    position: relative;
+    z-index: 2;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  
+  &__title {
+    color: $text-inverse;
+    margin-bottom: $space-4;
+  }
+  
+  &__description {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: $font-size-lg;
+    margin-bottom: $space-8;
+  }
+  
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-4;
+    justify-content: center;
+  }
+  
+  // Decorative elements
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+}
+
+// Stats Section
+.stats {
+  &__grid {
+    display: grid;
+    gap: $space-6;
+    
+    @include respond-to(sm) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @include respond-to(lg) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  
+  &__item {
+    text-align: center;
+    padding: $space-6;
+  }
+  
+  &__value {
+    font-size: $font-size-4xl;
+    font-weight: $font-weight-extrabold;
+    @include gradient-text;
+    margin-bottom: $space-2;
+    
+    @include respond-to(md) {
+      font-size: $font-size-5xl;
+    }
+  }
+  
+  &__label {
+    color: $text-secondary;
+    font-size: $font-size-base;
+  }
+}
+
+// About Page
+.about {
+  &__hero {
+    text-align: center;
+    padding: $space-24 0 $space-16;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  &__content {
+    display: grid;
+    gap: $space-12;
+    margin-bottom: $space-16;
+    
+    @include respond-to(lg) {
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+    }
+  }
+  
+  &__image {
+    width: 100%;
+    height: auto;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-lg;
+  }
+  
+  &__text {
+    h3 {
+      margin-bottom: $space-4;
+    }
+    
+    p {
+      margin-bottom: $space-4;
+      font-size: $font-size-lg;
+    }
+  }
+}
+
+// Solutions Page
+.solutions {
+  &__grid {
+    display: grid;
+    gap: $space-8;
+    
+    @include respond-to(lg) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  &__card {
+    padding: $space-8;
+    background-color: $bg-primary;
+    border: 1px solid $border-light;
+    border-radius: $radius-lg;
+    transition: all $transition-base;
+    
+    &:hover {
+      box-shadow: $shadow-lg;
+      border-color: $primary-light;
+    }
+  }
+  
+  &__icon {
+    @include flex-center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: $space-6;
+    border-radius: $radius-lg;
+    background: linear-gradient(135deg, $primary-lighter 0%, $secondary-light 100%);
+    font-size: $font-size-3xl;
+  }
+  
+  &__title {
+    font-size: $font-size-2xl;
+    margin-bottom: $space-4;
+  }
+  
+  &__description {
+    color: $text-secondary;
+    margin-bottom: $space-6;
+  }
+  
+  &__features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+  }
+  
+  &__feature {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-3;
+    
+    &-icon {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: $accent-emerald;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: $font-size-xs;
+      margin-top: 2px;
+    }
+  }
+}
+
+// Contact Page
+.contact {
+  &__content {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: $space-6;
+  }
+  
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+  
+  &__label {
+    font-weight: $font-weight-medium;
+    color: $text-primary;
+  }
+  
+  &__input,
+  &__textarea {
+    padding: $space-3 $space-4;
+    font-family: $font-primary;
+    font-size: $font-size-base;
+    border: 1px solid $border-medium;
+    border-radius: $radius-base;
+    transition: all $transition-fast;
+    
+    &:focus {
+      outline: none;
+      border-color: $primary-base;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+  }
+  
+  &__textarea {
+    min-height: 150px;
+    resize: vertical;
+  }
+}
+
+// ===================================
+// ANIMATIONS
+// ===================================
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+

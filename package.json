@@ -1,0 +1,25 @@
+{
+  "name": "projxon-ai-website",
+  "version": "1.0.0",
+  "description": "Projxon AI - Revolutionary offline AI solutions website",
+  "scripts": {
+    "build:css": "sass scss/style.scss css/style.css --style compressed",
+    "watch:css": "sass scss/style.scss css/style.css --watch",
+    "generate:articles": "node scripts/generate-articles.js",
+    "build": "npm run generate:articles && npm run build:css"
+  },
+  "keywords": [
+    "AI",
+    "offline AI",
+    "machine learning",
+    "LLM"
+  ],
+  "author": "Projxon AI",
+  "license": "MIT",
+  "devDependencies": {
+    "js-yaml": "^4.1.0",
+    "marked": "^11.1.1",
+    "sass": "^1.69.5"
+  }
+}
+
