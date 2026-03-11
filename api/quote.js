@@ -165,7 +165,7 @@ export default async function handler(req) {
             Comma separated only.
           `;
           const hfQueryResponse = await openai.responses.create({
-            model: 'gpt-5',
+            model: 'gpt-5-mini',
             input: [{ role: 'user', content: hfPrompt }]
           });
           
@@ -176,7 +176,7 @@ export default async function handler(req) {
           for (const query of hfQueries) {
             if (!query) continue;
             try {
-               const hfRes = await fetch(`https://huggingface.co/api/datasets?search=${encodeURIComponent(query)}&limit=2`);
+               const hfRes = await fetch(`https://huggingface.co/api/datasets?search=${encodeURIComponent(query)}&limit=3`);
                if (hfRes.ok) {
                  const data = await hfRes.json();
                  hfDatasets.push(...data.map(d => d.id));
@@ -234,6 +234,13 @@ export default async function handler(req) {
                 "deployment": "Where it runs and how it scales."
               }
             }
+            
+            ABOUT PROJXON & PRICING:
+            Projxon AI is a company specializing in getting totally custom and unique AI systems built for a company's specific needs. Our in house experts are open to any challenge, they are skilled in tasks from app development to pre-training to fine-tuning and will happily pioneer entirely new approaches. We take projects of all size from simple fine-tunes using existing datasets we can do for $50 to big multi-year projects in the hundreds of thousands. Your goal is to provide an estimated price range from the information and do a preliminary analysis prior to a full consultation. We do things the efficient way. The costs of a project depends on the size of the model being trained, the type of training, the scale of training, as well as other factors. For dense models <40B on datasets in the tens of thousand of examples, the training cost itself is pretty low, a few hundred bucks at most. It's the data collection, app development, and deployment where the money usually goes. Now bigger models, or RL, DPO, or other things like that of course add to that cost. Models bigger than 40-50B params require specialized training setups and cost a premium.
+            
+
+            BASE MODELS:
+            As of March 2026, the general best base models were the Qwen3.5 series.
           `;
 
           const quoteResponse = await openai.responses.create({
