@@ -16,7 +16,11 @@
   "author": "Projxon AI",
   "license": "MIT",
   "devDependencies": {
-    "sass": "^1.69.5"
+    "sass": "^1.69.5",
+    "vercel": "^50.29.0"
+  },
+  "dependencies": {
+    "openai": "^6.27.0",
+    "resend": "^6.9.3"
   }
 }
-

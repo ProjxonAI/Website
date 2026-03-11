@@ -7,17 +7,17 @@
 // COLOR PALETTE
 // ===================================
 
-// Primary Colors
-$primary-base: #6366f1;        // Indigo
-$primary-light: #818cf8;
-$primary-lighter: #a5b4fc;
-$primary-dark: #4f46e5;
-$primary-darker: #4338ca;
+// Primary Colors (Monochrome/Silver)
+$primary-base: #ffffff;        // Pure White
+$primary-light: #f4f4f5;       // Off-White
+$primary-lighter: #e4e4e7;     // Light Silver
+$primary-dark: #d4d4d8;        // Silver
+$primary-darker: #a1a1aa;      // Dark Silver
 
-// Secondary Colors (Derived from primary)
-$secondary-base: #8b5cf6;      // Purple
-$secondary-light: #a78bfa;
-$secondary-dark: #7c3aed;
+// Secondary Colors (Cool Greys)
+$secondary-base: #71717a;      // Neutral Grey
+$secondary-light: #a1a1aa;
+$secondary-dark: #52525b;
 
 // Accent Colors
 $accent-cyan: #06b6d4;
@@ -49,13 +49,13 @@ $info: $accent-cyan;
 // Background Colors
 $bg-primary: #ffffff;
 $bg-secondary: $neutral-50;
-$bg-dark: $neutral-900;
-$bg-dark-secondary: $neutral-800;
+$bg-dark: #07070a;
+$bg-dark-secondary: #0f0f14;
 
 // Text Colors
 $text-primary: $neutral-900;
-$text-secondary: $neutral-600;
-$text-tertiary: $neutral-500;
+$text-secondary: $neutral-400; // Increased brightness (was $neutral-600)
+$text-tertiary: $neutral-300; // Increased brightness (was $neutral-500)
 $text-inverse: #ffffff;
 $text-on-primary: #ffffff;
 
@@ -150,7 +150,7 @@ $shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.
 $shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
 $shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 $shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-$shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+$shadow-glow: 0 0 25px rgba(99, 102, 241, 0.5);
 
 // Transitions
 $transition-fast: 150ms ease-in-out;

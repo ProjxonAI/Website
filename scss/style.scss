@@ -22,8 +22,7 @@
   display: flex;
   align-items: center;
   padding-top: 72px;
-  overflow: hidden;
-  background: linear-gradient(180deg, #040405 0%, #09090f 60%, #0d0e14 100%);
+  background: transparent;
   color: $text-inverse;
   
   &__container {
@@ -44,9 +43,9 @@
     align-items: center;
     gap: $space-2;
     padding: $space-2 $space-4;
-    background-color: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background-color: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
     border-radius: $radius-full;
@@ -73,7 +72,7 @@
   
   &__description {
     font-size: $font-size-lg;
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.6);
     margin-bottom: $space-8;
     line-height: $line-height-relaxed;
     animation: fadeInUp 0.6s ease-out 0.2s backwards;
@@ -89,47 +88,6 @@
     gap: $space-4;
     justify-content: center;
     animation: fadeInUp 0.6s ease-out 0.3s backwards;
-  }
-  
-  // Background decorations
-  &__bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: hidden;
-    z-index: 1;
-    
-    &-circle {
-      position: absolute;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 70%);
-      
-      &--1 {
-        width: 440px;
-        height: 440px;
-        top: -220px;
-        right: -120px;
-        animation: float 20s ease-in-out infinite;
-      }
-      
-      &--2 {
-        width: 360px;
-        height: 360px;
-        bottom: 40px;
-        left: -60px;
-        animation: float 18s ease-in-out infinite reverse;
-      }
-      
-      &--3 {
-        width: 260px;
-        height: 260px;
-        top: 45%;
-        left: 12%;
-        animation: float 22s ease-in-out infinite;
-      }
-    }
   }
 }
 
@@ -187,10 +145,10 @@
 
 // CTA Section
 .cta {
-  background: linear-gradient(135deg, $primary-base 0%, $secondary-base 100%);
+  background: transparent;
   color: $text-inverse;
   border-radius: $radius-xl;
-  padding: $space-16 $space-6;
+  padding: $space-16 0;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -225,27 +183,7 @@
   }
   
   // Decorative elements
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 400px;
-    height: 400px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-  }
-  
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -30%;
-    left: -10%;
-    width: 300px;
-    height: 300px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-  }
+  // Removed heavy background elements
 }
 
 // Stats Section
@@ -474,3 +412,305 @@
   }
 }
 
+// ===================================
+// FLOW — Single-page continuous layout
+// ===================================
+.flow {
+  @include container;
+  color: $text-inverse;
+  padding-top: 72px;
+
+  &__hero {
+    min-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: $space-16 0 $space-24;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__grid-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    left: 50%;
+    transform: translateX(-50%);
+    background-image: 
+      linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    transform-origin: top center;
+    perspective: 1000px;
+    -webkit-transform: translateX(-50%) perspective(1000px) rotateX(60deg) translateY(-100px) scale(3);
+    transform: translateX(-50%) perspective(1000px) rotateX(60deg) translateY(-100px) scale(3);
+    -webkit-mask-image: radial-gradient(ellipse at center top, black 0%, transparent 60%), linear-gradient(to bottom, black 0%, transparent 80%);
+    mask-image: radial-gradient(ellipse at center top, black 0%, transparent 60%), linear-gradient(to bottom, black 0%, transparent 80%);
+    mask-composite: intersect;
+    -webkit-mask-composite: source-in;
+    z-index: -2;
+    animation: gridMove 15s linear infinite;
+  }
+
+  @keyframes gridMove {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 80px; }
+  }
+
+  &__orb {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.07) 0%, rgba(14, 165, 233, 0.04) 40%, rgba(255,255,255,0) 70%);
+    filter: blur(90px);
+    z-index: -5; // Ensured it is deep behind all content
+    pointer-events: none;
+    animation: pulseOrb 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulseOrb {
+    0% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.9); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  }
+
+  &__label {
+    display: inline-block;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: $space-6;
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  &__headline {
+    font-size: $font-size-5xl;
+    font-weight: $font-weight-extrabold;
+    line-height: $line-height-tight;
+    color: $text-inverse;
+    margin-bottom: $space-6;
+    animation: fadeInUp 0.6s ease-out 0.1s backwards;
+    letter-spacing: -0.02em;
+
+    @include respond-to(md) {
+      font-size: $font-size-6xl;
+    }
+
+    @include respond-to(lg) {
+      font-size: $font-size-7xl;
+    }
+  }
+
+  &__subline {
+    font-size: $font-size-lg;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: $line-height-relaxed;
+    max-width: 640px;
+    margin-bottom: $space-10;
+    animation: fadeInUp 0.6s ease-out 0.2s backwards;
+
+    @include respond-to(md) {
+      font-size: $font-size-xl;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-4;
+    justify-content: center;
+    animation: fadeInUp 0.6s ease-out 0.3s backwards;
+  }
+
+  &__services {
+    max-width: 920px;
+    margin: 0 auto;
+    text-align: center;
+    padding: $space-12 0 $space-20;
+  }
+
+  &__section-heading {
+    text-align: center;
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    line-height: $line-height-tight;
+    color: $text-inverse;
+    margin-bottom: $space-4;
+
+    @include respond-to(md) {
+      font-size: $font-size-4xl;
+    }
+  }
+
+  &__section-sub {
+    font-size: $font-size-lg;
+    color: rgba(255, 255, 255, 0.65);
+    max-width: 560px;
+    margin: 0 auto $space-16;
+    line-height: $line-height-relaxed;
+  }
+
+  &__grid {
+    display: grid;
+    gap: $space-12;
+    text-align: left;
+
+    @include respond-to(md) {
+      grid-template-columns: repeat(3, 1fr);
+      gap: $space-10;
+    }
+  }
+
+  &__feature {
+    svg {
+      color: $primary-light;
+      margin-bottom: $space-4;
+      display: block;
+    }
+
+    h3 {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      color: $text-inverse;
+      margin-bottom: $space-2;
+    }
+
+    p {
+      font-size: $font-size-base;
+      color: rgba(255, 255, 255, 0.65);
+      line-height: $line-height-relaxed;
+      margin-bottom: 0;
+    }
+  }
+
+  &__closing {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+    padding: $space-24 0 $space-20;
+  }
+}
+
+// Scroll-reveal animation
+.flow__feature,
+.flow__closing,
+.flow__services {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ===================================
+// PROCESS TIMELINE (About page)
+// ===================================
+.process-section {
+  background: #050505;
+  padding: $space-20 0 $space-24;
+
+  &__inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 $space-6;
+    text-align: center;
+  }
+}
+
+.process-timeline {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-10;
+  margin-top: $space-12;
+  position: relative;
+  text-align: left;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @include respond-to(md) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    text-align: center;
+    max-width: none;
+    margin: $space-12 0 0;
+  }
+
+  // Full-width connecting line behind the step numbers
+  &::before {
+    content: "";
+    position: absolute;
+    top: 20px;
+    left: calc(12.5%);
+    right: calc(12.5%);
+    height: 1px;
+    background: linear-gradient(to right, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.06) 100%);
+    z-index: 0;
+    display: none;
+
+    @include respond-to(md) {
+      display: block;
+    }
+  }
+}
+
+.process-step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 0;
+  position: relative;
+  z-index: 1;
+
+  @include respond-to(md) {
+    align-items: center;
+    text-align: center;
+    padding: 0 $space-4;
+  }
+
+  &__number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    background: rgba(56, 189, 248, 0.04);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    color: rgba(186, 230, 253, 0.5);
+    letter-spacing: 0.05em;
+    margin-bottom: $space-5;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin-bottom: $space-2;
+    letter-spacing: -0.01em;
+  }
+
+  &__desc {
+    font-size: $font-size-sm;
+    color: rgba(255, 255, 255, 0.62);
+    line-height: $line-height-relaxed;
+    margin-bottom: 0;
+  }
+}
