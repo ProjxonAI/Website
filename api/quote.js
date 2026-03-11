@@ -154,6 +154,9 @@ export default async function handler(req) {
           const researchResponse = await openai.responses.create({
             model: 'gpt-5-mini',
             input: [{ role: 'user', content: researchPrompt }],
+            tools: [
+              { type: "web_search" },
+            ],
           });
           
           const webContext = researchResponse.output_text;
