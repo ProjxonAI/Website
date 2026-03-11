@@ -126,207 +126,242 @@ export default async function handler(req) {
       Return a brief technical feasibility assessment.
     `;
 
-    // Simulated streaming response for Edge Functions
-    // In a production environment, we would use Server-Sent Events (SSE) or a genuine streaming Response.
-    // For this exact implementation, we'll process the pipeline and return a structured JSON with the final quote.
+    // We return a stream so Vercel Edge doesn't timeout after 25 seconds.
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        // Enqueue an immediate whitespace to bypass the TTFB limit
+        controller.enqueue(encoder.encode(' '));
 
-    // Let's execute Step 1
-    const researchResponse = await openai.responses.create({
-      model: 'gpt-5-mini',
-      input: [{ role: 'user', content: researchPrompt }],
-    });
-    
-    const webContext = researchResponse.output_text;
+        // Keep the connection alive while the 2-minute LLM runs
+        const heartbeat = setInterval(() => {
+          controller.enqueue(encoder.encode(' '));
+        }, 5000);
 
-    // 2. HF Search Query Generation
-    const hfPrompt = `
-      Based on this use case: "${formData.purpose}". 
-      Generate 3 specific search queries I can use to find datasets on HuggingFace. 
-      Comma separated only.
-    `;
-    const hfQueryResponse = await openai.responses.create({
-      model: 'gpt-5',
-      input: [{ role: 'user', content: hfPrompt }]
-    });
-    
-    const hfQueries = hfQueryResponse.output_text.split(',').map(s => s.trim());
+        try {
+          // 1. Initial Feasibility Research (GPT-5 with Search)
+          const researchPrompt = `
+            You are an elite AI architect at Projxon AI. A potential client wants to build:
+            Purpose: ${formData.purpose}
+            Objectives: ${formData.objectives?.join(', ')}
+            They claim existing models (like GPT-5/Gemini-3) handle it like this: ${formData.existing_models}. Reason: ${formData.model_failure || 'N/A'}.
 
-    // 3. Direct HF API Search
-    const hfDatasets = [];
-    for (const query of hfQueries) {
-      if (!query) continue;
-      try {
-         const hfRes = await fetch(`https://huggingface.co/api/datasets?search=${encodeURIComponent(query)}&limit=2`);
-         if (hfRes.ok) {
-           const data = await hfRes.json();
-           hfDatasets.push(...data.map(d => d.id));
-         }
-      } catch (e) {
-         console.error('HF Search Error:', e);
-      }
-    }
+            Use your search capability to find existing solutions, feasibility, and technical hurdles for this exact use case.
+            IMPORTANT: Only use what you found in the search explicitly. Exclude any results from HuggingFace (HF) as we handle that separately.
+            Return a brief technical feasibility assessment.
+          `;
 
-    // 4. Final Estimation (GPT-5.4)
-    const synthesisPrompt = `
-      You are an elite AI architect at Projxon AI.
-      Synthesize this data into a final quote.
+          const researchResponse = await openai.responses.create({
+            model: 'gpt-5-mini',
+            input: [{ role: 'user', content: researchPrompt }],
+          });
+          
+          const webContext = researchResponse.output_text;
 
-      CLIENT CONSTRAINTS:
-      - Entity: ${formData.entity_type} (Size: ${formData.entity_size || 'N/A'})
-      - Objective: ${formData.objectives?.join(', ')}
-      - Domain: ${formData.purpose}
-      - Input Modalities: ${formData.input_modalities?.join(', ')}
-      - Output Modalities: ${formData.output_modalities?.join(', ')}
-      - Latency: ${formData.latency}
-      - Deployment: ${formData.deployment}
-      - Support/Maint: ${formData.support_tier}
-      - Data Status: ${formData.data_status}. Scale: ${formData.data_scale || 'Unknown'}. Quality: ${formData.data_quality}
-      - Uploaded Data Example: ${fileName}
-      - Programmatically Verifiable (RLVR Potential): ${formData.verifiable}
-      - Willing to assist w/ DPO preference pairs: ${formData.dpo_willingness}
-      - RAG Format (if applicable): ${formData.rag_format || 'N/A'}
-      - Automation Tools (if applicable): ${formData.automation_tools || 'N/A'}
-      - Current Workflow / Bottleneck: ${formData.current_workflow || 'N/A'}
-      - Success Metrics (KPIs): ${formData.success_metrics || 'N/A'}
-      - Data Freshness: ${formData.data_freshness || 'N/A'}
-      - Compliance / Security: ${formData.compliance_security || 'N/A'}
-      - Additional Info: ${formData.additional_info || 'None'}
+          // 2. HF Search Query Generation
+          const hfPrompt = `
+            Based on this use case: "${formData.purpose}". 
+            Generate 3 specific search queries I can use to find datasets on HuggingFace. 
+            Comma separated only.
+          `;
+          const hfQueryResponse = await openai.responses.create({
+            model: 'gpt-5',
+            input: [{ role: 'user', content: hfPrompt }]
+          });
+          
+          const hfQueries = hfQueryResponse.output_text.split(',').map(s => s.trim());
 
-      WEB RESEARCH FEASIBILITY:
-      ${webContext}
+          // 3. Direct HF API Search
+          const hfDatasets = [];
+          for (const query of hfQueries) {
+            if (!query) continue;
+            try {
+               const hfRes = await fetch(`https://huggingface.co/api/datasets?search=${encodeURIComponent(query)}&limit=2`);
+               if (hfRes.ok) {
+                 const data = await hfRes.json();
+                 hfDatasets.push(...data.map(d => d.id));
+               }
+            } catch (e) {
+               console.error('HF Search Error:', e);
+            }
+          }
 
-      POTENTIAL HF DATASETS FOUND:
-      ${hfDatasets.join(', ') || 'None found instantly.'}
+          // 4. Final Estimation (GPT-5.4)
+          const synthesisPrompt = `
+            You are an elite AI architect at Projxon AI.
+            Synthesize this data into a final quote.
 
-      PROMPT EXAMPLES AND INFERENCE TARGETS:
-      Use these examples to infer the architectural approach and cost, matching the scale of work:
-      ${PROMPT_EXAMPLES}
+            CLIENT CONSTRAINTS:
+            - Entity: ${formData.entity_type} (Size: ${formData.entity_size || 'N/A'})
+            - Objective: ${formData.objectives?.join(', ')}
+            - Domain: ${formData.purpose}
+            - Input Modalities: ${formData.input_modalities?.join(', ')}
+            - Output Modalities: ${formData.output_modalities?.join(', ')}
+            - Latency: ${formData.latency}
+            - Deployment: ${formData.deployment}
+            - Support/Maint: ${formData.support_tier}
+            - Data Status: ${formData.data_status}. Scale: ${formData.data_scale || 'Unknown'}. Quality: ${formData.data_quality}
+            - Uploaded Data Example: ${fileName}
+            - Programmatically Verifiable (RLVR Potential): ${formData.verifiable}
+            - Willing to assist w/ DPO preference pairs: ${formData.dpo_willingness}
+            - RAG Format (if applicable): ${formData.rag_format || 'N/A'}
+            - Automation Tools (if applicable): ${formData.automation_tools || 'N/A'}
+            - Current Workflow / Bottleneck: ${formData.current_workflow || 'N/A'}
+            - Success Metrics (KPIs): ${formData.success_metrics || 'N/A'}
+            - Data Freshness: ${formData.data_freshness || 'N/A'}
+            - Compliance / Security: ${formData.compliance_security || 'N/A'}
+            - Additional Info: ${formData.additional_info || 'None'}
 
-      INSTRUCTIONS:
-      Return ONLY a JSON block with the following schema:
-      {
-        "feasibility_analysis": "Maximum 3 highly concise sentences explaining the architectural approach, whether a frontier model or specialized model is needed, and why.",
-        "one_time_cost": "Total estimated one-time cost, e.g., $30,000",
-        "recurring_cost": "Total estimated recurring monthly cost, e.g., $2,000/mo",
-        "itemized_sheet": {
-          "training_methods": "Specific methods used (SFT, RLVR, Abliteration, DPO).",
-          "data_processing": "Data generation, cleaning, parsing required.",
-          "deployment": "Where it runs and how it scales."
+            WEB RESEARCH FEASIBILITY:
+            ${webContext}
+
+            POTENTIAL HF DATASETS FOUND:
+            ${hfDatasets.join(', ') || 'None found instantly.'}
+
+            PROMPT EXAMPLES AND INFERENCE TARGETS:
+            Use these examples to infer the architectural approach and cost, matching the scale of work:
+            ${PROMPT_EXAMPLES}
+
+            INSTRUCTIONS:
+            Return ONLY a JSON block with the following schema:
+            {
+              "feasibility_analysis": "Maximum 3 highly concise sentences explaining the architectural approach, whether a frontier model or specialized model is needed, and why.",
+              "one_time_cost": "Total estimated one-time cost, e.g., $30,000",
+              "recurring_cost": "Total estimated recurring monthly cost, e.g., $2,000/mo",
+              "itemized_sheet": {
+                "training_methods": "Specific methods used (SFT, RLVR, Abliteration, DPO).",
+                "data_processing": "Data generation, cleaning, parsing required.",
+                "deployment": "Where it runs and how it scales."
+              }
+            }
+          `;
+
+          const quoteResponse = await openai.responses.create({
+            model: 'gpt-5.4', 
+            text: { 
+              format: { 
+                type: "json_schema", 
+                name: "quote_schema",
+                schema: { 
+                  type: "object", 
+                  properties: { 
+                    feasibility_analysis: { type: "string" },
+                    one_time_cost: { type: "string" },
+                    recurring_cost: { type: "string" },
+                    itemized_sheet: {
+                      type: "object",
+                      properties: {
+                        training_methods: { type: "string" },
+                        data_processing: { type: "string" },
+                        deployment: { type: "string" }
+                      },
+                      required: ["training_methods", "data_processing", "deployment"],
+                      additionalProperties: false
+                    }
+                  },
+                  required: ["feasibility_analysis", "one_time_cost", "recurring_cost", "itemized_sheet"],
+                  additionalProperties: false
+                },
+                strict: true 
+              } 
+            },
+            input: [{ role: 'user', content: synthesisPrompt }]
+          });
+
+          const quoteData = JSON.parse(quoteResponse.output_text);
+
+          // 5. Send Internal Email to Projxon Team via Resend
+          try {
+            await resend.emails.send({
+              from: 'quotes@projxon.ai',
+              to: 'admin@projxon.ai',
+              subject: `New AI Quote Lead: ${formData.company || formData.name}`,
+              html: `
+                <h2>New Lead: ${formData.company}</h2>
+                <p><strong>Name:</strong> ${formData.name}</p>
+                <p><strong>Email:</strong> ${formData.email}</p>
+                <p><strong>Use Case:</strong> ${formData.purpose}</p>
+                <p><strong>Current Workflow:</strong> ${formData.current_workflow || 'N/A'}</p>
+                <p><strong>Success Metrics:</strong> ${formData.success_metrics || 'N/A'}</p>
+                <p><strong>Deployment:</strong> ${formData.deployment}</p>
+                <p><strong>Data Freshness:</strong> ${formData.data_freshness || 'N/A'}</p>
+                <p><strong>RAG Format:</strong> ${formData.rag_format || 'None'}</p>
+                <p><strong>Automation Tools:</strong> ${formData.automation_tools || 'None'}</p>
+                <p><strong>Verifiable:</strong> ${formData.verifiable}</p>
+                <p><strong>Prepared for DPO:</strong> ${formData.dpo_willingness}</p>
+                <p><strong>Compliance/Security:</strong> ${formData.compliance_security || 'None'}</p>
+                <p><strong>Data Upload:</strong> ${fileName}</p>
+                <p><strong>Additional Info:</strong> ${formData.additional_info}</p>
+                <br/>
+                <h3>AI Quote Generated</h3>
+                <p><strong>One Time:</strong> ${quoteData.one_time_cost}</p>
+                <p><strong>Recurring:</strong> ${quoteData.recurring_cost}</p>
+                <p><strong>Training Methods:</strong> ${quoteData.itemized_sheet?.training_methods}</p>
+                <br/><hr/><br/>
+                <h3>Raw LLM Web Research Context</h3>
+                <pre style="white-space: pre-wrap; background: #f4f4f5; padding: 1rem;">${webContext || 'None'}</pre>
+                <h3>HuggingFace Datasets Found</h3>
+                <p>${hfDatasets.join(', ') || 'None'}</p>
+              `
+            });
+
+            if (formData.email_copy === 'yes' && formData.email) {
+              await resend.emails.send({
+                from: 'quotes@projxon.ai',
+                to: formData.email,
+                subject: 'Your Projxon AI Quote Estimate',
+                html: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2>Your Custom AI Architecture Estimate</h2>
+                    <p>Hi ${formData.name.split(' ')[0]},</p>
+                    <p>Thank you for requesting an estimate from Projxon AI. Based on the requirements for <strong>${formData.company || 'your project'}</strong>, here is our initial pricing and architectural breakdown:</p>
+                    
+                    <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 25px 0;">
+                      <h3 style="margin-top: 0; color: #0284c7;">Estimated Cost</h3>
+                      <p style="margin: 5px 0;"><strong>One-Time Setup:</strong> ${quoteData.one_time_cost}</p>
+                      <p style="margin: 5px 0;"><strong>Recurring Monthly:</strong> ${quoteData.recurring_cost}</p>
+                    </div>
+                    
+                    <h3 style="color: #0f172a;">Proposed Architecture</h3>
+                    <p style="color: #334155; line-height: 1.6;">${quoteData.feasibility_analysis}</p>
+                    
+                    <h3 style="color: #0f172a; margin-top: 25px;">Itemized Setup</h3>
+                    <ul style="color: #334155; line-height: 1.6;">
+                      <li style="margin-bottom: 10px;"><strong>Approach:</strong> ${quoteData.itemized_sheet?.training_methods}</li>
+                      <li style="margin-bottom: 10px;"><strong>Data Processing:</strong> ${quoteData.itemized_sheet?.data_processing}</li>
+                      <li style="margin-bottom: 10px;"><strong>Deployment:</strong> ${quoteData.itemized_sheet?.deployment}</li>
+                    </ul>
+                    
+                    <p style="margin-top: 30px;">This is a preliminary AI-generated estimate. Let us know if you'd like to schedule a formal consultation to discuss this architecture in depth.</p>
+                    <p style="color: #64748b;">Best,<br>The Projxon AI Team</p>
+                  </div>
+                `
+              });
+            }
+          } catch (emailError) {
+            console.error('Failed to send Resend email:', emailError);
+            // We don't fail the user request just because the internal email failed
+          }
+
+          clearInterval(heartbeat);
+          controller.enqueue(encoder.encode(JSON.stringify(quoteData)));
+          controller.close();
+
+        } catch (error) {
+          clearInterval(heartbeat);
+          console.error("Pipeline Error:", error);
+          controller.enqueue(encoder.encode(JSON.stringify({ error: error.message })));
+          controller.close();
         }
       }
-    `;
-
-    const quoteResponse = await openai.responses.create({
-      model: 'gpt-5.4', 
-      text: { 
-        format: { 
-          type: "json_schema", 
-          name: "quote_schema",
-          schema: { 
-            type: "object", 
-            properties: { 
-              feasibility_analysis: { type: "string" },
-              one_time_cost: { type: "string" },
-              recurring_cost: { type: "string" },
-              itemized_sheet: {
-                type: "object",
-                properties: {
-                  training_methods: { type: "string" },
-                  data_processing: { type: "string" },
-                  deployment: { type: "string" }
-                },
-                required: ["training_methods", "data_processing", "deployment"],
-                additionalProperties: false
-              }
-            },
-            required: ["feasibility_analysis", "one_time_cost", "recurring_cost", "itemized_sheet"],
-            additionalProperties: false
-          },
-          strict: true 
-        } 
-      },
-      input: [{ role: 'user', content: synthesisPrompt }]
     });
 
-    const quoteData = JSON.parse(quoteResponse.output_text);
-
-    // 5. Send Internal Email to Projxon Team via Resend
-    try {
-      await resend.emails.send({
-        from: 'quotes@projxon.ai',
-        to: 'admin@proxjon.ai',
-        subject: `New AI Quote Lead: ${formData.company || formData.name}`,
-        html: `
-          <h2>New Lead: ${formData.company}</h2>
-          <p><strong>Name:</strong> ${formData.name}</p>
-          <p><strong>Email:</strong> ${formData.email}</p>
-          <p><strong>Use Case:</strong> ${formData.purpose}</p>
-          <p><strong>Current Workflow:</strong> ${formData.current_workflow || 'N/A'}</p>
-          <p><strong>Success Metrics:</strong> ${formData.success_metrics || 'N/A'}</p>
-          <p><strong>Deployment:</strong> ${formData.deployment}</p>
-          <p><strong>Data Freshness:</strong> ${formData.data_freshness || 'N/A'}</p>
-          <p><strong>RAG Format:</strong> ${formData.rag_format || 'None'}</p>
-          <p><strong>Automation Tools:</strong> ${formData.automation_tools || 'None'}</p>
-          <p><strong>Verifiable:</strong> ${formData.verifiable}</p>
-          <p><strong>Prepared for DPO:</strong> ${formData.dpo_willingness}</p>
-          <p><strong>Compliance/Security:</strong> ${formData.compliance_security || 'None'}</p>
-          <p><strong>Data Upload:</strong> ${fileName}</p>
-          <p><strong>Additional Info:</strong> ${formData.additional_info}</p>
-          <br/>
-          <h3>AI Quote Generated</h3>
-          <p><strong>One Time:</strong> ${quoteData.one_time_cost}</p>
-          <p><strong>Recurring:</strong> ${quoteData.recurring_cost}</p>
-          <p><strong>Training Methods:</strong> ${quoteData.itemized_sheet?.training_methods}</p>
-          <br/><hr/><br/>
-          <h3>Raw LLM Web Research Context</h3>
-          <pre style="white-space: pre-wrap; background: #f4f4f5; padding: 1rem;">${webContext || 'None'}</pre>
-          <h3>HuggingFace Datasets Found</h3>
-          <p>${hfDatasets.join(', ') || 'None'}</p>
-        `
-      });
-
-      if (formData.email_copy === 'yes' && formData.email) {
-        await resend.emails.send({
-          from: 'quotes@projxon.ai',
-          to: formData.email,
-          subject: 'Your Projxon AI Quote Estimate',
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2>Your Custom AI Architecture Estimate</h2>
-              <p>Hi ${formData.name.split(' ')[0]},</p>
-              <p>Thank you for requesting an estimate from Projxon AI. Based on the requirements for <strong>${formData.company || 'your project'}</strong>, here is our initial pricing and architectural breakdown:</p>
-              
-              <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 25px 0;">
-                <h3 style="margin-top: 0; color: #0284c7;">Estimated Cost</h3>
-                <p style="margin: 5px 0;"><strong>One-Time Setup:</strong> ${quoteData.one_time_cost}</p>
-                <p style="margin: 5px 0;"><strong>Recurring Monthly:</strong> ${quoteData.recurring_cost}</p>
-              </div>
-              
-              <h3 style="color: #0f172a;">Proposed Architecture</h3>
-              <p style="color: #334155; line-height: 1.6;">${quoteData.feasibility_analysis}</p>
-              
-              <h3 style="color: #0f172a; margin-top: 25px;">Itemized Setup</h3>
-              <ul style="color: #334155; line-height: 1.6;">
-                <li style="margin-bottom: 10px;"><strong>Approach:</strong> ${quoteData.itemized_sheet?.training_methods}</li>
-                <li style="margin-bottom: 10px;"><strong>Data Processing:</strong> ${quoteData.itemized_sheet?.data_processing}</li>
-                <li style="margin-bottom: 10px;"><strong>Deployment:</strong> ${quoteData.itemized_sheet?.deployment}</li>
-              </ul>
-              
-              <p style="margin-top: 30px;">This is a preliminary AI-generated estimate. Let us know if you'd like to schedule a formal consultation to discuss this architecture in depth.</p>
-              <p style="color: #64748b;">Best,<br>The Projxon AI Team</p>
-            </div>
-          `
-        });
-      }
-    } catch (emailError) {
-      console.error('Failed to send Resend email:', emailError);
-      // We don't fail the user request just because the internal email failed
-    }
-
-    // Return the quote to the frontend
-    return new Response(JSON.stringify(quoteData), {
+    return new Response(stream, {
       status: 200,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-transform'
+      }
     });
 
   } catch (error) {
