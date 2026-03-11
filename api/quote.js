@@ -80,6 +80,13 @@ export default async function handler(req) {
 
   try {
     const reqForm = await req.formData();
+    
+    // Spam Trap: If the hidden honeypot field is filled, silently abort to save LLM costs.
+    if (reqForm.get('contact_last_name_confirm')) {
+      console.log('Honeypot triggered. Aborting quietly.');
+      return new Response(JSON.stringify({ success: true }), { status: 200 });
+    }
+    
     const formData = {
       name: reqForm.get('name'),
       email: reqForm.get('email'),
@@ -110,9 +117,24 @@ export default async function handler(req) {
       compliance_security: reqForm.get('compliance_security'),
     };
     
-    // Check if file was uploaded
+    // Check if file was uploaded and extract its text content to feed the LLM
     const file = reqForm.get('data_examples');
-    const fileName = file && file.name ? file.name : 'None';
+    let fileName = 'None';
+    let fileContentSnippet = 'None provided.';
+    
+    if (file && file.name) {
+      fileName = file.name;
+      try {
+        const buffer = await file.arrayBuffer();
+        const decoder = new TextDecoder('utf-8');
+        const fullText = decoder.decode(buffer);
+        // Take an aggressive 5k char snippet to avoid blowing up the context window
+        fileContentSnippet = fullText.slice(0, 5000); 
+      } catch (err) {
+        console.error("Failed to parse file upload buffer:", err);
+        fileContentSnippet = 'Error reading file content format. Could not process.';
+      }
+    }
 
     // 1. Initial Feasibility Research (GPT-5 with Search)
     const researchPrompt = `
@@ -139,7 +161,7 @@ export default async function handler(req) {
         }, 5000);
 
         try {
-          // 1. Initial Feasibility Research (GPT-5 with Search)
+          // 1. Initial Feasibility Research (GPT-5 with Search) & 2. HF Search Query Generation
           const researchPrompt = `
             You are an elite AI architect at Projxon AI. A potential client wants to build:
             Purpose: ${formData.purpose}
@@ -150,28 +172,27 @@ export default async function handler(req) {
             IMPORTANT: Only use what you found in the search explicitly. Exclude any results from HuggingFace (HF) as we handle that separately.
             Return a brief technical feasibility assessment.
           `;
-
-          const researchResponse = await openai.responses.create({
-            model: 'gpt-5-mini',
-            input: [{ role: 'user', content: researchPrompt }],
-            tools: [
-              { type: "web_search" },
-            ],
-          });
           
-          const webContext = researchResponse.output_text;
-
-          // 2. HF Search Query Generation
           const hfPrompt = `
             Based on this use case: "${formData.purpose}". 
             Generate 3 specific search queries I can use to find datasets on HuggingFace. 
             Comma separated only.
           `;
-          const hfQueryResponse = await openai.responses.create({
-            model: 'gpt-5-mini',
-            input: [{ role: 'user', content: hfPrompt }]
-          });
+
+          // Execute these two independent baseline queries in parallel to speed up the Edge function
+          const [researchResponse, hfQueryResponse] = await Promise.all([
+            openai.responses.create({
+              model: 'gpt-5-mini',
+              input: [{ role: 'user', content: researchPrompt }],
+              tools: [{ type: "web_search" }],
+            }),
+            openai.responses.create({
+              model: 'gpt-5-mini',
+              input: [{ role: 'user', content: hfPrompt }]
+            })
+          ]);
           
+          const webContext = researchResponse.output_text;
           const hfQueries = hfQueryResponse.output_text.split(',').map(s => s.trim());
 
           // 3. Direct HF API Search
@@ -228,6 +249,7 @@ export default async function handler(req) {
             INSTRUCTIONS:
             Return ONLY a JSON block with the following schema:
             {
+              "full_internal_analysis": "An unconstrained, highly detailed string explaining exactly how you arrived at these numbers and architectural choices. This is for the engineering team to review.",
               "feasibility_analysis": "Maximum 3 highly concise sentences explaining the architectural approach, whether a frontier model or specialized model is needed, and why.",
               "one_time_cost": "Total estimated one-time cost, e.g., $30,000",
               "recurring_cost": "Total estimated recurring monthly cost, e.g., $2,000/mo",
@@ -255,6 +277,7 @@ export default async function handler(req) {
                 schema: { 
                   type: "object", 
                   properties: { 
+                    full_internal_analysis: { type: "string" },
                     feasibility_analysis: { type: "string" },
                     one_time_cost: { type: "string" },
                     recurring_cost: { type: "string" },
@@ -269,7 +292,7 @@ export default async function handler(req) {
                       additionalProperties: false
                     }
                   },
-                  required: ["feasibility_analysis", "one_time_cost", "recurring_cost", "itemized_sheet"],
+                  required: ["full_internal_analysis", "feasibility_analysis", "one_time_cost", "recurring_cost", "itemized_sheet"],
                   additionalProperties: false
                 },
                 strict: true 
@@ -308,10 +331,14 @@ export default async function handler(req) {
                 <p><strong>Recurring:</strong> ${quoteData.recurring_cost}</p>
                 <p><strong>Training Methods:</strong> ${quoteData.itemized_sheet?.training_methods}</p>
                 <br/><hr/><br/>
+                <h3>GPT-5.4 Raw Internal Rationale (Unedited)</h3>
+                <pre style="white-space: pre-wrap; background: #e0f2fe; padding: 1rem;">${quoteData.full_internal_analysis}</pre>
                 <h3>Raw LLM Web Research Context</h3>
                 <pre style="white-space: pre-wrap; background: #f4f4f5; padding: 1rem;">${webContext || 'None'}</pre>
                 <h3>HuggingFace Datasets Found</h3>
                 <p>${hfDatasets.join(', ') || 'None'}</p>
+                <h3>Raw Uploaded Data Sample (Snippet)</h3>
+                <pre style="white-space: pre-wrap; background: #f4f4f5; padding: 1rem;">${fileContentSnippet || 'None'}</pre>
               `
             });
 

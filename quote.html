@@ -397,20 +397,17 @@
       progressBar.style.width = '5%';
       
       const states = [
-        { text: 'Generating HF queries and researching datasets...', time: 20000, width: '15%' },
-        { text: 'Analyzing domain feasibility...', time: 40000, width: '30%' },
-        { text: 'Evaluating Verifiability for RLVR architecture...', time: 65000, width: '45%' },
-        { text: 'Estimating compute requirements...', time: 95000, width: '60%' },
-        { text: 'Formulating context payload...', time: 130000, width: '75%' },
-        { text: 'Synthesizing final architecture with GPT-5.4...', time: 155000, width: '90%' },
+        { text: 'Analyzing web context for domain constraints...', width: '15%' },
+        { text: 'Generating HF queries and researching datasets...', width: '30%' },
+        { text: 'Evaluating Verifiability for RLVR architecture...', width: '45%' },
+        { text: 'Estimating compute requirements...', width: '60%' },
+        { text: 'Formulating context payload...', width: '75%' },
+        { text: 'Synthesizing final architecture with GPT-5.4...', width: '90%' },
+        { text: 'Finalizing JSON blueprint...', width: '95%' }
       ];
       
-      const timers = states.map(state => {
-        return setTimeout(() => {
-          statusText.innerText = state.text;
-          progressBar.style.width = state.width;
-        }, state.time);
-      });
+      let currentStateIndex = 0;
+      let finalJsonStr = '';
       
       try {
         const response = await fetch('/api/quote', {
@@ -422,10 +419,31 @@
           throw new Error('Failed to generate quote');
         }
 
-        const quoteData = await response.json();
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        
+        // Actively read the streaming whitespace heartbeat
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          const chunk = decoder.decode(value, { stream: true });
+          finalJsonStr += chunk;
+          
+          // Every time a pulse arrives (or a chunk is handled), try to advance the progress bar
+          if (currentStateIndex < states.length) {
+             const s = states[currentStateIndex];
+             statusText.innerText = s.text;
+             progressBar.style.width = s.width;
+             currentStateIndex++;
+          }
+        }
 
         progressBar.style.width = '100%';
         await new Promise(r => setTimeout(r, 400)); // Let the bar finish visually
+
+        // The parser ignores the massive leading whitespace block
+        const quoteData = JSON.parse(finalJsonStr);
 
         progressContainer.style.display = 'none';
         resultsDiv.style.display = 'block';
@@ -463,8 +481,6 @@
         progressContainer.style.display = 'none';
         formDiv.style.display = 'block'; // Show form again so they can retry
         alert("There was an error generating your quote. Please ensure API keys are configured or try again later.");
-      } finally {
-        timers.forEach(t => clearTimeout(t));
       }
     });
   </script>
