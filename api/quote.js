@@ -418,7 +418,7 @@ export default async function handler(req) {
                 <h3>Raw LLM Web Research Context</h3>
                 <pre style="white-space: pre-wrap; background: #f4f4f5; padding: 1rem;">${webContext || 'None'}</pre>
                 <h3>HuggingFace Datasets Found</h3>
-                <p>${hfDatasets.join(', ') || 'None'}</p>
+                <p>${finalHfList.join(', ') || 'None'}</p>
                 <h3>Raw Uploaded Data Sample (Snippet Sent to LLM)</h3>
                 <pre style="white-space: pre-wrap; background: #f4f4f5; padding: 1rem;">${fileContentSnippet || 'None'}</pre>
               `
@@ -426,11 +426,17 @@ export default async function handler(req) {
 
             // Attach the full file to the admin email if it exists
             if (file && file.name && fileBuffer) {
-              // We pass the raw buffer to Resend attachments
+              const uint8Array = new Uint8Array(fileBuffer);
+              let binary = '';
+              for (let i = 0; i < uint8Array.byteLength; i++) {
+                binary += String.fromCharCode(uint8Array[i]);
+              }
+              const base64Content = btoa(binary);
+
               adminEmailPayload.attachments = [
                 {
                   filename: file.name,
-                  content: Buffer.from(fileBuffer)
+                  content: base64Content
                 }
               ];
             }
