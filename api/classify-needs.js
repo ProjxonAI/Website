@@ -14,7 +14,7 @@ export default async function handler(req) {
   }
 
   try {
-    const { purpose, techNeeds } = await req.json();
+    const { purpose, dataScale, projectScale, techNeeds } = await req.json();
 
     const systemPrompt = `You are a technical routing AI for Projxon's intake pipeline.
 A prospective client has provided their objective in plain english, along with a few technologies they *think* they need.
@@ -35,6 +35,12 @@ Example: {"needs_custom_model": false, "needs_rag": true, "needs_app": true, "ne
     const contextStr = `
 CLIENT PURPOSE:
 "${purpose}"
+
+ESTIMATED DATA SCALE:
+"${dataScale || 'Not specified'}"
+
+ESTIMATED PROJECT SCALE:
+"${projectScale || 'Not specified'}"
 
 TECHNOLOGIES THEY SELECTED:
 [${(techNeeds || []).join(', ')}]

@@ -176,6 +176,10 @@
                   <label for="purpose" class="form-label">In plain english, what should this AI system do?</label>
                   <textarea id="purpose" name="purpose" class="form-input" style="min-height: 120px;" placeholder="e.g. We need an AI that reads incoming customer emails, checks our Notion documentation for the answer, and drafts a response." required></textarea>
                 </div>
+                <div class="form-group" style="margin-top: 1.5rem;">
+                  <label for="data_scale" class="form-label">Roughly how much data are we dealing with, and where does it currently live?</label>
+                  <textarea id="data_scale" name="data_scale" class="form-input" style="min-height: 80px;" placeholder="e.g., 3,000 PDF notes and 50 audio files on Google Drive, or 50GB of raw SQL logs."></textarea>
+                </div>
                 
                 <div class="form-group" style="margin-top: 1.5rem;">
                   <label for="project_scale" class="form-label">Estimated Project Size / Scale</label>
@@ -286,6 +290,24 @@
             <div class="wizard-step" id="step-5">
               <div class="form-section" style="border: none; padding: 0; margin-bottom: 0;">
                 <h3 class="form-section__title" style="font-size: 1.5rem;">Final Notes</h3>
+                <div class="form-group">
+                  <label for="latency" class="form-label">What are your latency (speed) requirements?</label>
+                  <select id="latency" name="latency" class="form-input" style="padding-right: 2rem; appearance: auto;" required>
+                    <option value="" disabled selected>Select an option...</option>
+                    <option value="standard">Standard Chat (Typing speed is fine, 1-3 seconds)</option>
+                    <option value="realtime">Real-time / Sub-second (Critical for voice/high-freq)</option>
+                    <option value="batch">Batch Processing (It can process overnight or async)</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-top: 1rem;">
+                  <label for="support_tier" class="form-label">After launch, what level of ongoing support do you anticipate?</label>
+                  <select id="support_tier" name="support_tier" class="form-input" style="padding-right: 2rem; appearance: auto;" required>
+                    <option value="" disabled selected>Select an option...</option>
+                    <option value="self_managed">Self-managed: Hand us the keys, our team will maintain it</option>
+                    <option value="standard">Standard Maintenance: Keep the servers running and models updated</option>
+                    <option value="white_glove">White-glove: Active continuous training and dedicated support</option>
+                  </select>
+                </div>
                 <div class="form-group">
                   <label for="compliance_security" class="form-label">Are there any regulatory or security constraints?</label>
                   <input type="text" id="compliance_security" name="compliance_security" class="form-input" placeholder="e.g. HIPAA, SOC2, GDPR, Air-gapped environment">
@@ -492,6 +514,8 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
         const purpose = document.getElementById('purpose').value;
+        const dataScale = document.getElementById('data_scale').value;
+        const projectScale = document.getElementById('project_scale').value;
         const techCheckboxes = document.querySelectorAll('input[name="tech_needs"]:checked');
         const techNeeds = Array.from(techCheckboxes).map(cb => cb.value);
         
@@ -499,7 +523,7 @@
           const res = await fetch('/api/classify-needs', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ purpose, techNeeds })
+            body: JSON.stringify({ purpose, dataScale, projectScale, techNeeds })
           });
           
           let routingData = { needs_custom_model: true, needs_rag: true, needs_app: true };
@@ -526,7 +550,7 @@
           if (routing.needs_custom_model) {
               html += `
               <div class="form-section" style="padding: 1.5rem; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; margin-bottom: 2rem;">
-                  <h4 style="color: #38bdf8; margin-top: 0; margin-bottom: 1rem;">Custom Model Requirements</h4>
+                  <h4 style="color: #38bdf8; margin-top: 0; margin-bottom: 1rem;">Custom Model & Training</h4>
                   <div class="form-group">
                       <label class="form-label">Training Data Availability</label>
                       <div class="form-checkbox-group">
@@ -534,6 +558,32 @@
                           <label class="form-check"><input type="radio" name="data_status" value="partial_examples"><span class="form-check__label">I have some contextual info, but not perfect examples</span></label>
                           <label class="form-check"><input type="radio" name="data_status" value="no_examples"><span class="form-check__label">I have no examples to train on yet</span></label>
                           <label class="form-check"><input type="radio" name="data_status" value="unsure"><span class="form-check__label">I'm not sure / Advise me</span></label>
+                      </div>
+                  </div>
+                  <div class="form-group" style="margin-top: 1.5rem;">
+                      <label class="form-label">Data Quality & Synthetic Generation Potential</label>
+                      <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-top: -0.25rem; margin-bottom: 0.75rem;">Even without perfect task examples, we can often synthesize premium training data from your existing messy documents.</p>
+                      <div class="form-checkbox-group">
+                          <label class="form-check"><input type="radio" name="synthetic_potential" value="yes_unstructured"><span class="form-check__label">Yes, we have lots of raw unstructured data you can use</span></label>
+                          <label class="form-check"><input type="radio" name="synthetic_potential" value="no_data"><span class="form-check__label">No, we don't have enough internal data to synthesize from</span></label>
+                          <label class="form-check"><input type="radio" name="synthetic_potential" value="unsure"><span class="form-check__label">Unsure / Need assessment</span></label>
+                      </div>
+                  </div>
+                  <div class="form-group" style="margin-top: 1.5rem;">
+                      <label class="form-label">Verifiability & Training Methodology</label>
+                      <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-top: -0.25rem; margin-bottom: 0.75rem;">This determines if we can use advanced automated training (RLVR). Example: Code generation or strict JSON output is verifiable. Creative writing or theological interpretation is subjective.</p>
+                      <div class="form-checkbox-group">
+                          <label class="form-check"><input type="radio" name="verifiable" value="yes_verifiable"><span class="form-check__label">Yes, the answers can be strictly, automatically checked/verified</span></label>
+                          <label class="form-check"><input type="radio" name="verifiable" value="no_subjective"><span class="form-check__label">No, the answers are subjective, creative, or nuanced</span></label>
+                          <label class="form-check"><input type="radio" name="verifiable" value="unsure"><span class="form-check__label">Unsure / It's a mix</span></label>
+                      </div>
+                  </div>
+                  <div class="form-group" style="margin-top: 1.5rem;">
+                      <label class="form-label">Human Feedback Loop</label>
+                      <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-top: -0.25rem; margin-bottom: 0.75rem;">This enables techniques like DPO (Direct Preference Optimization).</p>
+                      <div class="form-checkbox-group">
+                          <label class="form-check"><input type="radio" name="dpo_willingness" value="yes_feedback"><span class="form-check__label">Yes, our team can dedicate time to review/rank AI outputs</span></label>
+                          <label class="form-check"><input type="radio" name="dpo_willingness" value="no_feedback"><span class="form-check__label">No, it needs to work without our ongoing manual training</span></label>
                       </div>
                   </div>
                   <div class="form-group" style="margin-top: 1.5rem;">

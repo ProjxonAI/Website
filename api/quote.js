@@ -104,6 +104,7 @@ export default async function handler(req) {
       support_tier: reqForm.get('support_tier'),
       data_status: reqForm.get('data_status'),
       data_scale: reqForm.get('data_scale'),
+      synthetic_potential: reqForm.get('synthetic_potential'),
       data_quality: reqForm.get('data_quality'),
       verifiable: reqForm.get('verifiable'),
       dpo_willingness: reqForm.get('dpo_willingness'),
@@ -309,9 +310,10 @@ export default async function handler(req) {
             - Deployment: ${formData.deployment}
             - Support/Maint: ${formData.support_tier}
             - Data Status: ${formData.data_status}. Scale: ${formData.data_scale || 'Unknown'}. Quality: ${formData.data_quality}
+            - Synthetic potential from raw unstructured data: ${formData.synthetic_potential}
             - Uploaded Data Example: ${fileName}
             - Programmatically Verifiable (RLVR Potential): ${formData.verifiable}
-            - Willing to assist w/ DPO preference pairs: ${formData.dpo_willingness}
+            - Willing to assist w/ DPO preference pairs (Human Feedback loop): ${formData.dpo_willingness}
             - RAG Format (if applicable): ${formData.rag_format || 'N/A'}
             - Automation Tools (if applicable): ${formData.automation_tools || 'N/A'}
             - Current Workflow / Bottleneck: ${formData.current_workflow || 'N/A'}
@@ -319,6 +321,14 @@ export default async function handler(req) {
             - Data Freshness: ${formData.data_freshness || 'N/A'}
             - Compliance / Security: ${formData.compliance_security || 'N/A'}
             - Additional Info: ${formData.additional_info || 'None'}
+
+            CRITICAL EVALUATION RULES:
+            - If "verifiable" is "yes_verifiable", strongly consider RLVR (Reinforcement Learning with Verifiable Rewards) in the training path. If it is subjective, RLVR is impossible.
+            - If "synthetic_potential" is "yes_unstructured", propose a data ingestion pipeline to generate high-quality synthetic instruct pairs.
+            - If "dpo_willingness" is "yes_feedback", you can propose DPO (Direct Preference Optimization).
+            - Use "latency" to determine if they need a highly quantized local model (real-time) vs a massive batch processor.
+            - "support_tier" dictates the recurring monthly cost calculation.
+            - "data_scale" dictates the data engineering one-time cost.
 
             WEB RESEARCH FEASIBILITY:
             ${webContext}
