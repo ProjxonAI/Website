@@ -200,15 +200,18 @@ export default async function handler(req) {
             AI Q&A Context:
             ${qaHistoryStr || 'None provided.'}
 
-            Use your search capability to find existing solutions, feasibility, and technical hurdles for this exact use case.
-            IMPORTANT: Only use what you found in the search explicitly. Exclude any results from HuggingFace (HF) as we handle that separately.
-            Return a brief technical feasibility assessment.
+            Use your search capability to find:
+            1. Existing solutions, feasibility, and technical hurdles for this exact use case.
+            2. Any high-quality HuggingFace (HF) datasets that would be perfect for training or RAG in this domain.
+            
+            IMPORTANT: Return a brief technical feasibility assessment. If you found specific HuggingFace datasets, name them explicitly by their ID (e.g., "OpenMed/Medical-Reasoning").
           `;
           
           const hfPrompt = `
             Based on this use case: "${formData.purpose}". 
-            Generate 3 specific search queries I can use to find datasets on HuggingFace. 
-            Comma separated only.
+            Generate 5 BROAD categorical or tag-based queries I can use to find datasets on HuggingFace. 
+            Avoid long phrases. Use single words or short pairings.
+            Examples: "medical", "legal document", "finance", "classification", "conversational".
           `;
 
           // Execute these two independent baseline queries in parallel to speed up the Edge function
@@ -220,34 +223,67 @@ export default async function handler(req) {
             }),
             openai.responses.create({
               model: 'gpt-5-mini',
+              text: {
+                format: {
+                  type: "json_schema",
+                  name: "hf_queries",
+                  schema: {
+                    type: "object",
+                    properties: {
+                      queries: {
+                        type: "array",
+                        items: { type: "string" }
+                      }
+                    },
+                    required: ["queries"],
+                    additionalProperties: false
+                  },
+                  strict: true
+                }
+              },
               input: [{ role: 'user', content: hfPrompt }]
             })
           ]);
           
           const webContext = researchResponse.output_text;
-          const hfQueries = hfQueryResponse.output_text.split(',').map(s => s.trim());
+          let hfQueries = [];
+          try {
+            const hfQueryData = JSON.parse(hfQueryResponse.output_text);
+            hfQueries = hfQueryData.queries || [];
+          } catch (e) {
+            console.error("Failed to parse HF queries structured output:", e);
+            hfQueries = [formData.purpose.slice(0, 50)]; // ultra-fallback
+          }
 
           // 3. Direct HF API Search
-          const hfDatasets = [];
+          const hfDatasets = new Set(); 
           for (const query of hfQueries) {
-            if (!query) continue;
+            if (!query || query.trim() === '') continue;
             try {
                const controller = new AbortController();
                const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout so the pipe doesn't hang
                
-               const hfRes = await fetch(`https://huggingface.co/api/datasets?search=${encodeURIComponent(query)}&limit=3`, {
-                   signal: controller.signal
+               const hfRes = await fetch(`https://huggingface.co/api/datasets?search=${encodeURIComponent(query.trim())}&limit=5`, {
+                   signal: controller.signal,
+                   headers: {
+                       'User-Agent': 'Projxon-AI-Architect/1.0 (https://projxon.ai; support@projxon.ai)'
+                   }
                });
                clearTimeout(timeoutId);
                
                if (hfRes.ok) {
                  const data = await hfRes.json();
-                 hfDatasets.push(...data.map(d => d.id));
+                 if (Array.isArray(data)) {
+                   data.forEach(d => {
+                     if (d.id) hfDatasets.add(d.id);
+                   });
+                 }
                }
             } catch (e) {
-               console.error('HF Search Timeout or Error:', e.message);
+               console.error(`HF Search Error for "${query}":`, e.message);
             }
           }
+          const finalHfList = Array.from(hfDatasets);
 
           // 4. Final Estimation (GPT-5.4)
           const synthesisPrompt = `
@@ -288,7 +324,7 @@ export default async function handler(req) {
             ${webContext}
 
             POTENTIAL HF DATASETS FOUND:
-            ${hfDatasets.join(', ') || 'None found instantly.'}
+            ${finalHfList.join(', ') || 'None found instantly.'}
 
             PROMPT EXAMPLES AND INFERENCE TARGETS:
             Use these examples to infer the architectural approach and cost, matching the scale of work:
