@@ -51,7 +51,7 @@
         Pricing <span class="gradient-text">Estimator</span>
       </h1>
       <p class="flow__subline">
-        Fill out this application to receive an instant, AI-generated baseline estimate. This process takes 1-2 minutes. Final pricing will be determined after a consultation.
+        Fill out this application to receive an instant, AI-generated baseline estimate. This process takes less than 5 minutes. Final pricing will be determined after a consultation.
       </p>
     </div>
 
@@ -60,278 +60,283 @@
       <div class="container container--narrow">
         <div class="card card--glass" style="padding: 3rem; border-radius: 1.5rem; max-width: 800px; margin: 0 auto; position: relative; overflow: hidden;">
           
-          <!-- Inline Progress Container (Hidden Initially) -->
-          <div id="ai-progress-container" style="display: none; padding: 4rem 2rem; text-align: center;">
-            <h3 style="color: white; font-size: 1.75rem; margin-bottom: 0.5rem;">Analyzing Requirements & Architecture</h3>
-            <p id="ai-status-text" style="color: #38bdf8; font-size: 1.125rem; margin-bottom: 2rem;">Searching the web for existing solutions...</p>
+          <!-- Wizard content follows -->
+
+          <style>
+            .wizard-step {
+              display: none;
+              animation: fadeIn 0.4s ease-out;
+            }
+            .wizard-step.active {
+              display: block;
+            }
+            @keyframes fadeIn {
+              from { opacity: 0; transform: translateY(10px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+            .wizard-progress {
+              display: flex;
+              gap: 8px;
+              margin-bottom: 2.5rem;
+            }
+            .wizard-progress__dot {
+              flex: 1;
+              height: 4px;
+              background: rgba(255,255,255,0.1);
+              border-radius: 2px;
+              transition: background 0.3s ease;
+            }
+            .wizard-progress__dot.active {
+              background: #38bdf8;
+            }
+            .wizard-progress__dot.completed {
+              background: rgba(56, 189, 248, 0.5);
+            }
+            .wizard-nav {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-top: 3rem;
+              padding-top: 2rem;
+              border-top: 1px solid rgba(255,255,255,0.05);
+            }
+          </style>
+
+          <form id="quote-form" action="#" method="POST" enctype="multipart/form-data">
             
-            <div style="width: 100%; max-width: 400px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin: 0 auto 1rem auto; overflow: hidden; position: relative;">
-               <div id="ai-progress-bar" style="width: 0%; height: 100%; background: #38bdf8; transition: width 0.5s ease-out;"></div>
+            <!-- Wizard Progress Indicator -->
+            <div class="wizard-progress" id="wizard-progress">
+              <div class="wizard-progress__dot active"></div>
+              <div class="wizard-progress__dot"></div>
+              <div class="wizard-progress__dot"></div>
+              <div class="wizard-progress__dot"></div>
             </div>
-            <p id="ai-timer-estimate" style="color: rgba(255,255,255,0.5); font-size: 0.875rem;">Estimated time: ~3 minutes</p>
-          </div>
+            
+            <!-- Step 1: Identity -->
+            <div class="wizard-step active" id="step-1">
+              <div class="form-section" style="border: none; padding: 0; margin-bottom: 0;">
+                <h3 class="form-section__title" style="font-size: 1.5rem;">Let's get introduced.</h3>
+                <div class="form-group">
+                  <label for="name" class="form-label">Full Name</label>
+                  <input type="text" id="name" name="name" class="form-input" placeholder="Jane Doe" required>
+                </div>
+                <div class="form-group">
+                  <label for="email" class="form-label">Email Address</label>
+                  <input type="email" id="email" name="email" class="form-input" placeholder="jane@example.com" required>
+                </div>
+                <div class="form-group" style="margin-top: 1rem;">
+                  <label for="entity_type" class="form-label">Who is this for?</label>
+                  <select id="entity_type" name="entity_type" class="form-input" style="padding-right: 2rem; appearance: auto;" required>
+                    <option value="" disabled selected>Select an option...</option>
+                    <option value="personal">Personal / Individual</option>
+                    <option value="startup">Startup / Small Business</option>
+                    <option value="enterprise">Enterprise</option>
+                    <option value="nonprofit">Non-Profit / NGO</option>
+                    <option value="education">Education / Research</option>
+                  </select>
+                </div>
+              </div>
+              <div class="wizard-nav" style="justify-content: flex-end;">
+                <button type="button" class="btn btn--primary" onclick="nextStep(1)">Next Step &rarr;</button>
+              </div>
+            </div>
+
+            <!-- Step 2: Organization Info -->
+            <div class="wizard-step" id="step-2">
+              <div class="form-section" style="border: none; padding: 0; margin-bottom: 0;">
+                <h3 class="form-section__title" style="font-size: 1.5rem;">Tell us about your organization.</h3>
+                <div class="form-group">
+                  <label for="company" class="form-label">Organization Name</label>
+                  <input type="text" id="company" name="company" class="form-input" placeholder="Acme Corp">
+                </div>
+                <div class="form-group">
+                  <label for="website" class="form-label">Website (Optional)</label>
+                  <input type="url" id="website" name="website" class="form-input" placeholder="https://example.com">
+                </div>
+                <div class="form-group">
+                  <label for="entity_size" class="form-label">Estimated Number of Employees/Users</label>
+                  <input type="text" id="entity_size" name="entity_size" class="form-input" placeholder="e.g. 10-50">
+                </div>
+                <div class="form-group">
+                  <label for="industry" class="form-label">Industry Sector</label>
+                  <input type="text" id="industry" name="industry" class="form-input" placeholder="e.g. Healthcare, Finance, E-commerce">
+                </div>
+              </div>
+              <div class="wizard-nav">
+                <button type="button" class="btn btn--ghost-light" onclick="prevStep(2)">&larr; Back</button>
+                <button type="button" class="btn btn--primary" onclick="nextStep(2)">Scope Requirements &rarr;</button>
+              </div>
+            </div>
+
+            <!-- Step 3: The Problem -->
+            <div class="wizard-step" id="step-3">
+              <div class="form-section" style="border: none; padding: 0; margin-bottom: 0;">
+                <h3 class="form-section__title" style="font-size: 1.5rem;">What are we building?</h3>
+                <div class="form-group">
+                  <label for="purpose" class="form-label">In plain english, what should this AI system do?</label>
+                  <textarea id="purpose" name="purpose" class="form-input" style="min-height: 120px;" placeholder="e.g. We need an AI that reads incoming customer emails, checks our Notion documentation for the answer, and drafts a response." required></textarea>
+                </div>
+                
+                <div class="form-group" style="margin-top: 1.5rem;">
+                  <label for="project_scale" class="form-label">Estimated Project Size / Scale</label>
+                  <select id="project_scale" name="project_scale" class="form-input" style="padding-right: 2rem; appearance: auto;" required>
+                    <option value="" disabled selected>Select an option...</option>
+                    <option value="micro">Micro (Quick script, small automation, simple advice)</option>
+                    <option value="standard">Standard (Custom model, internal tool, standard app)</option>
+                    <option value="enterprise">Enterprise (Massive scale, high security, complex multi-agent system)</option>
+                    <option value="unsure">Unsure (I need your team to size it)</option>
+                  </select>
+                </div>
+
+                <div class="form-group" style="margin-top: 2rem;">
+                  <label class="form-label" style="font-size: 1.05rem; margin-bottom: 0.5rem;">Which technologies do you think you need? (Select all that apply)</label>
+                  <div class="form-checkbox-group" style="gap: 1rem;">
+                    <label class="form-check" style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
+                      <input type="checkbox" name="tech_needs" value="custom_model">
+                      <div style="display: flex; flex-direction: column;">
+                        <span class="form-check__label" style="font-weight: 600; color: #fff;">Custom AI Model</span>
+                        <span style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 4px;">Trained on our proprietary data logic or heavily fine-tuned.</span>
+                      </div>
+                    </label>
+                    <label class="form-check" style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
+                      <input type="checkbox" name="tech_needs" value="agentic_system">
+                      <div style="display: flex; flex-direction: column;">
+                        <span class="form-check__label" style="font-weight: 600; color: #fff;">Agentic System / Automation</span>
+                        <span style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 4px;">Executes multi-step workflows, browses the web, or calls APIs.</span>
+                      </div>
+                    </label>
+                    <label class="form-check" style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
+                      <input type="checkbox" name="tech_needs" value="rag_search">
+                      <div style="display: flex; flex-direction: column;">
+                        <span class="form-check__label" style="font-weight: 600; color: #fff;">Search & RAG</span>
+                        <span style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 4px;">Chatting with private documents, PDFs, or codebases.</span>
+                      </div>
+                    </label>
+                    <label class="form-check" style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
+                      <input type="checkbox" name="tech_needs" value="app_frontend">
+                      <div style="display: flex; flex-direction: column;">
+                        <span class="form-check__label" style="font-weight: 600; color: #fff;">Complete Web/Mobile App</span>
+                        <span style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 4px;">We need a user-facing frontend interface built as well.</span>
+                      </div>
+                    </label>
+                    <label class="form-check" style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
+                      <input type="checkbox" name="tech_needs" value="synthetic_data">
+                      <div style="display: flex; flex-direction: column;">
+                        <span class="form-check__label" style="font-weight: 600; color: #fff;">Dataset Generation (Only)</span>
+                        <span style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 4px;">I just need Projxon to generate training rows for my own team.</span>
+                      </div>
+                    </label>
+                    <label class="form-check" style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
+                      <input type="checkbox" name="tech_needs" value="strategic_consulting">
+                      <div style="display: flex; flex-direction: column;">
+                        <span class="form-check__label" style="font-weight: 600; color: #fff;">Strategic Consulting / Workshop</span>
+                        <span style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 4px;">Advisory on an existing system, team training, or architecture review.</span>
+                      </div>
+                    </label>
+                    <label class="form-check" style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
+                      <input type="checkbox" name="tech_needs" value="unsure" onchange="this.checked ? document.querySelectorAll('input[name=tech_needs]:not([value=unsure])').forEach(el => el.checked = false) : null;">
+                      <div style="display: flex; flex-direction: column;">
+                        <span class="form-check__label" style="font-weight: 600; color: #fff;">Unsure</span>
+                        <span style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 4px;">I'm actually not sure, please have the AI figure it out!</span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="wizard-nav">
+                <button type="button" class="btn btn--ghost-light" onclick="prevStep(3)">&larr; Back</button>
+                <button type="button" class="btn btn--primary" id="btn-analyze-needs" onclick="classifyNeeds()">Analyze Technicals &rarr;</button>
+              </div>
+            </div>
+
+            <!-- Loader for Step 4 (replaces the form temporarily) -->
+            <div class="wizard-step" id="step-4-loader">
+              <div class="form-section" style="border: none; text-align: center; padding: 4rem 0;">
+                <h3 class="gradient-text" style="font-size: 2rem; margin-bottom: 1rem;">Analyzing Requirements...</h3>
+                <p style="color: rgba(255,255,255,0.7); font-size: 1.1rem;">Our AI Architect is evaluating your description to determine the specific infrastructure you need.</p>
+                <div style="margin: 2rem auto; max-width: 400px; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; position: relative;">
+                  <div style="position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: #38bdf8; animation: slideProgress 2s infinite ease-in-out; border-radius: 4px;"></div>
+                </div>
+                <style>
+                  @keyframes slideProgress {
+                    0% { left: -50%; }
+                    100% { left: 100%; }
+                  }
+                </style>
+              </div>
+            </div>
+
+            <!-- Step 4: Technical Needs (Dynamically populated) -->
+            <div class="wizard-step" id="step-4">
+              <div class="form-section">
+                <h3 class="form-section__title" style="font-size: 1.5rem;">Technical Implementation</h3>
+                <p style="color: rgba(255,255,255,0.6); margin-top: 0; margin-bottom: 2rem;">Based on your requirements, we've focused on the technical variables that matter most for this build.</p>
+                
+                <div id="dynamic_technical_content">
+                  <!-- AI routes questions here via JS -->
+                </div>
+              </div>
+              <div class="wizard-nav">
+                <button type="button" class="btn btn--ghost-light" onclick="prevStep(4)">&larr; Back</button>
+                <button type="button" class="btn btn--primary" onclick="nextStep(4)">Additional Details &rarr;</button>
+              </div>
+            </div>
+
+            <!-- Step 5: Additional Details -->
+            <div class="wizard-step" id="step-5">
+              <div class="form-section" style="border: none; padding: 0; margin-bottom: 0;">
+                <h3 class="form-section__title" style="font-size: 1.5rem;">Final Notes</h3>
+                <div class="form-group">
+                  <label for="compliance_security" class="form-label">Are there any regulatory or security constraints?</label>
+                  <input type="text" id="compliance_security" name="compliance_security" class="form-input" placeholder="e.g. HIPAA, SOC2, GDPR, Air-gapped environment">
+                </div>
+                <div class="form-group">
+                  <label for="timeline_budget" class="form-label">Target Launch Timeline & Budget</label>
+                  <input type="text" id="timeline_budget" name="timeline_budget" class="form-input" placeholder="e.g. Launch in 3 months, Budget around $15k-$30k">
+                </div>
+                <div class="form-group">
+                  <label for="additional_info" class="form-label">Any additional information or context?</label>
+                  <textarea id="additional_info" name="additional_info" class="form-input" placeholder="Hardware constraints, target demographics..."></textarea>
+                </div>
+              </div>
+              
+              <div class="wizard-nav">
+                <button type="button" class="btn btn--ghost-light" onclick="prevStep(5)">&larr; Back</button>
+                <div style="flex: 1; text-align: right;">
+                  <button type="submit" class="btn btn--primary" style="padding: 1rem 2rem; font-size: 1.125rem;">Finalize Request</button>
+                  <p style="text-align: right; color: rgba(255,255,255,0.4); font-size: 0.875rem; margin-top: 0.5rem;">We will verify edge cases on the next page.</p>
+                </div>
+              </div>
+            </div>
+            <!-- Step 6: AI Clarification & Quote Gen -->
+            <div class="wizard-step" id="step-6">
+              <div class="form-section" style="border: none; text-align: center; padding: 4rem 0;" id="ai-progress-container">
+                <h3 class="gradient-text" style="font-size: 2rem; margin-bottom: 1rem;" id="ai-progress-title">Reviewing Architecture...</h3>
+                <p id="ai-status-text" style="color: rgba(255,255,255,0.7); font-size: 1.1rem;">Our AI Architect is running a final review of your requirements.</p>
+                <div id="loading-bar-wrapper" style="margin: 2rem auto; max-width: 400px; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; position: relative;">
+                  <div id="ai-progress-bar" style="position: absolute; top: 0; left: 0; height: 100%; width: 5%; background: #38bdf8; transition: width 0.5s ease; border-radius: 4px;"></div>
+                </div>
+              </div>
+
+              <!-- Hidden initially, revealed if Clarify API requires inputs -->
+              <div id="ai-qa-container" style="display: none; text-align: left;">
+                  <div id="qa-questions-wrapper"></div>
+                  <div class="wizard-nav" style="justify-content: flex-end; margin-top: 2rem;">
+                      <button type="button" class="btn btn--primary" onclick="submitFinalAnswersAndQuote()">Generate Estimate &rarr;</button>
+                  </div>
+              </div>
+            </div>
+
+          </form>
 
           <!-- Quote Results (Hidden Initially) -->
-          <div id="quote-results" style="display: none;">
-             <h2 class="gradient-text" style="font-size: 2.5rem; margin-bottom: 1rem;">Your Estimate</h2>
+          <div id="quote-results" style="display: none; margin-top: 2rem;">
+             <h2 class="gradient-text" style="font-size: 2.5rem; margin-bottom: 1rem; text-align: center;">Your Estimate</h2>
+             <p style="text-align: center; color: rgba(255,255,255,0.7); margin-bottom: 2rem;">Based on your inputs and our AI's analysis, here is the projected scope and cost for your build. A Projxon engineer will review this and reach out shortly.</p>
              <div id="quote-content" style="color: rgba(255,255,255,0.8); line-height: 1.7; margin-bottom: 2rem;"></div>
              <a href="https://calendly.com/hudson-gouge/30min" class="btn btn--primary" style="width: 100%; justify-content: center;">Schedule Consultation</a>
              <button onclick="window.location.reload();" class="btn btn--ghost" style="width: 100%; justify-content: center; margin-top: 1rem;">Start Over</button>
           </div>
-
-          <form id="quote-form" action="#" method="POST" enctype="multipart/form-data">
-            
-            <div class="form-section">
-              <h3 class="form-section__title">01. Contact Info</h3>
-              <div class="form-group">
-                <label for="name" class="form-label">Full Name</label>
-                <input type="text" id="name" name="name" class="form-input" placeholder="Jane Doe" required>
-              </div>
-              <div class="form-group">
-                <label for="email" class="form-label">Work Email</label>
-                <input type="email" id="email" name="email" class="form-input" placeholder="jane@company.com" required>
-              </div>
-              <div class="form-group">
-                <label for="company" class="form-label">Company Name</label>
-                <input type="text" id="company" name="company" class="form-input" placeholder="Acme Corp" required>
-              </div>
-              <div class="form-group" style="margin-top: 1rem;">
-                <label for="entity_type" class="form-label">Entity Type</label>
-                <select id="entity_type" name="entity_type" class="form-input" style="padding-right: 2rem; appearance: auto;" onchange="document.getElementById('entity_size_container').style.display = (this.value === 'business' || this.value === 'organization') ? 'block' : 'none';">
-                  <option value="business">Business</option>
-                  <option value="organization">Organization</option>
-                  <option value="personal">Personal</option>
-                </select>
-              </div>
-              <div class="form-group" id="entity_size_container" style="margin-top: 1rem; margin-bottom: 0;">
-                <label for="entity_size" class="form-label">Entity Size (Number of Employees/Members)</label>
-                <input type="text" id="entity_size" name="entity_size" class="form-input" placeholder="e.g. 10-50">
-              </div>
-            </div>
-
-            <div class="form-section">
-              <h3 class="form-section__title">02. Core Objectives</h3>
-              <div class="form-group">
-                <label class="form-label">What does the AI need to do? (Select all that apply)</label>
-                <div class="form-checkbox-group">
-                  <label class="form-check">
-                    <input type="checkbox" name="objectives" value="answer_questions">
-                    <span class="form-check__label">Answer complex questions</span>
-                  </label>
-                  <label class="form-check">
-                    <input type="checkbox" name="objectives" value="rag" onchange="document.getElementById('rag_format_container').style.display = this.checked ? 'block' : 'none';">
-                    <span class="form-check__label">Search my private data (RAG)</span>
-                  </label>
-                  <label class="form-check">
-                    <input type="checkbox" name="objectives" value="automate_tasks" onchange="document.getElementById('automation_tools_container').style.display = this.checked ? 'block' : 'none';">
-                    <span class="form-check__label">Automate repetitive tasks or workflows</span>
-                  </label>
-                  <label class="form-check">
-                    <input type="checkbox" name="objectives" value="integrate_software">
-                    <span class="form-check__label">Integrate with proprietary software</span>
-                  </label>
-                  <label class="form-check">
-                    <input type="checkbox" name="objectives" value="other">
-                    <span class="form-check__label">Other (Please specify below)</span>
-                  </label>
-                </div>
-              </div>
-              <div class="form-group" id="rag_format_container" style="display: none; margin-top: 1rem;">
-                <label for="rag_format" class="form-label">What format is this data mostly in?</label>
-                <input type="text" id="rag_format" name="rag_format" class="form-input" placeholder="e.g. PDFs, Word Docs, Confluence, SQL">
-              </div>
-              <div class="form-group" id="automation_tools_container" style="display: none; margin-top: 1rem;">
-                <label for="automation_tools" class="form-label">What software tools do you currently use for this?</label>
-                <input type="text" id="automation_tools" name="automation_tools" class="form-input" placeholder="e.g. Salesforce, Excel, Zapier">
-              </div>
-              <div class="form-group">
-                <label for="purpose" class="form-label">Explain the purpose and domain</label>
-                <textarea id="purpose" name="purpose" class="form-input" placeholder="We need to automate underwriting processes in commercial real estate by parsing 100-page lease documents..." required></textarea>
-              </div>
-              <div class="form-group">
-                <label for="current_workflow" class="form-label">How do you currently solve this problem, and what is the bottleneck?</label>
-                <textarea id="current_workflow" name="current_workflow" class="form-input" placeholder="Our team manually reviews documents taking 2 hours per file..."></textarea>
-              </div>
-              <div class="form-group">
-                <label for="success_metrics" class="form-label">How will you measure success?</label>
-                <input type="text" id="success_metrics" name="success_metrics" class="form-input" placeholder="e.g. 95% accuracy, sub-1s latency, 20 hours saved/week">
-              </div>
-            </div>
-
-            <div class="form-section">
-              <h3 class="form-section__title">03. Model Feasibility</h3>
-              <div class="form-group">
-                <label class="form-label">Are existing frontier models (OpenAI, Google) able to solve your problem out of the box?</label>
-                <div class="form-checkbox-group" style="flex-direction: row; gap: 2rem;">
-                  <label class="form-check">
-                    <input type="radio" name="existing_models" value="yes" required>
-                    <span class="form-check__label">Yes</span>
-                  </label>
-                  <label class="form-check">
-                    <input type="radio" name="existing_models" value="no">
-                    <span class="form-check__label">No</span>
-                  </label>
-                  <label class="form-check">
-                    <input type="radio" name="existing_models" value="unsure">
-                    <span class="form-check__label">Unsure</span>
-                  </label>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="model_failure" class="form-label">If yes, specify which. If no, explain why they fail.</label>
-                <textarea id="model_failure" name="model_failure" class="form-input" placeholder="GPT-5 is too slow for our latency needs, and it hallucinates specific internal acronyms..."></textarea>
-              </div>
-              <div class="form-group">
-                <label for="broadness" class="form-label">How much do broad capabilities matter vs specialized domain knowledge?</label>
-                <select id="broadness" name="broadness" class="form-input" style="padding-right: 2rem; appearance: auto;">
-                  <option value="highly_specialized">Hyper-specialized (Needs to do one task perfectly)</option>
-                  <option value="balanced">Balanced (Needs some general knowledge alongside specific tasks)</option>
-                  <option value="broad">Broad (Needs to know everything about the world)</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-section" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
-              <h3 class="form-section__title">04. Modalities & Architecture</h3>
-              
-              <div class="grid grid--2" style="gap: 2rem; margin-bottom: 2rem;">
-                <!-- Inputs -->
-                <div class="form-group">
-                  <label class="form-label">Input Modalities (What the AI receives)</label>
-                  <div class="form-checkbox-group">
-                    <label class="form-check"><input type="checkbox" name="input_modalities" value="text" checked><span class="form-check__label">Read Text</span></label>
-                    <label class="form-check"><input type="checkbox" name="input_modalities" value="audio_voice"><span class="form-check__label">Hear Voices</span></label>
-                    <label class="form-check"><input type="checkbox" name="input_modalities" value="audio_sound"><span class="form-check__label">Hear Sounds/Environment</span></label>
-                    <label class="form-check"><input type="checkbox" name="input_modalities" value="image"><span class="form-check__label">See Images/Documents</span></label>
-                    <label class="form-check"><input type="checkbox" name="input_modalities" value="video"><span class="form-check__label">Watch Videos</span></label>
-                    <label class="form-check"><input type="checkbox" name="input_modalities" value="other"><span class="form-check__label">Other input types</span></label>
-                  </div>
-                </div>
-                
-                <!-- Outputs -->
-                <div class="form-group">
-                  <label class="form-label">Output Modalities (What the AI generates)</label>
-                  <div class="form-checkbox-group">
-                    <label class="form-check"><input type="checkbox" name="output_modalities" value="text" checked><span class="form-check__label">Generate Text/Code</span></label>
-                    <label class="form-check"><input type="checkbox" name="output_modalities" value="audio_voice"><span class="form-check__label">Generate Voices</span></label>
-                    <label class="form-check"><input type="checkbox" name="output_modalities" value="audio_sound"><span class="form-check__label">Generate Sounds/Music</span></label>
-                    <label class="form-check"><input type="checkbox" name="output_modalities" value="image"><span class="form-check__label">Generate Images</span></label>
-                    <label class="form-check"><input type="checkbox" name="output_modalities" value="video"><span class="form-check__label">Generate Videos</span></label>
-                    <label class="form-check"><input type="checkbox" name="output_modalities" value="simulation"><span class="form-check__label">Reality Simulations / Other</span></label>
-                  </div>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Response Speed Requirements</label>
-                <div class="form-checkbox-group" style="flex-direction: row; gap: 2rem;">
-                  <label class="form-check"><input type="radio" name="latency" value="realtime" required><span class="form-check__label">Real-time (Voice, immediate inference)</span></label>
-                  <label class="form-check"><input type="radio" name="latency" value="delayed"><span class="form-check__label">Delayed (Batch processing, offline)</span></label>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-section">
-              <h3 class="form-section__title">05. Data & Deployment</h3>
-              
-              <div class="form-group">
-                <label class="form-label">Deployment Environment</label>
-                <div class="form-checkbox-group" style="flex-direction: row; flex-wrap: wrap; gap: 2rem;">
-                  <label class="form-check"><input type="radio" name="deployment" value="dedicated" required><span class="form-check__label">Dedicated hardware server</span></label>
-                  <label class="form-check"><input type="radio" name="deployment" value="private_cloud"><span class="form-check__label">Private Cloud (AWS/GCP VPC)</span></label>
-                  <label class="form-check"><input type="radio" name="deployment" value="on_device"><span class="form-check__label">On-device (Laptop, Mobile edge)</span></label>
-                  <label class="form-check"><input type="radio" name="deployment" value="unsure"><span class="form-check__label">Unsure</span></label>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Data Freshness Requirements</label>
-                <div class="form-checkbox-group" style="flex-direction: row; flex-wrap: wrap; gap: 2rem;">
-                  <label class="form-check"><input type="radio" name="data_freshness" value="realtime" required><span class="form-check__label">Real-time (Live APIs, active databases)</span></label>
-                  <label class="form-check"><input type="radio" name="data_freshness" value="static"><span class="form-check__label">Static (Uploaded documents, historical data)</span></label>
-                  <label class="form-check"><input type="radio" name="data_freshness" value="hybrid"><span class="form-check__label">Hybrid (Both)</span></label>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Training Data Availability</label>
-                <div class="form-checkbox-group">
-                  <label class="form-check"><input type="radio" name="data_status" value="full_examples" required><span class="form-check__label">I have task examples including all required information to solve the problem</span></label>
-                  <label class="form-check"><input type="radio" name="data_status" value="partial_examples"><span class="form-check__label">I have task examples, but only some contextual info</span></label>
-                  <label class="form-check"><input type="radio" name="data_status" value="no_examples"><span class="form-check__label">I have no examples (Scale of task is unknown)</span></label>
-                </div>
-              </div>
-
-              <div class="form-group" style="display: flex; gap: 1rem; margin-bottom: 2rem;">
-                <div style="flex: 1;">
-                  <label for="data_scale" class="form-label">Approximate Scale (Number of examples/rows)</label>
-                  <input type="text" id="data_scale" name="data_scale" class="form-input" placeholder="e.g. 10,000 documents, 1M rows">
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="data_quality" class="form-label">Describe your data quality / organization</label>
-                <textarea id="data_quality" name="data_quality" class="form-input" placeholder="How organized is it? What formats are present (PDF, SQL, CSV)? Is the format consistent?"></textarea>
-              </div>
-              <div class="form-group" style="margin-top: 2rem; margin-bottom: 2rem;">
-                <label for="data_examples" class="form-label">Optional: Upload Examples of Inputs/Outputs</label>
-                <input type="file" id="data_examples" name="data_examples" class="form-input" accept=".txt,.csv,.pdf,.json" style="padding: 0.8rem;">
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Pricing / Support Preference</label>
-                <div class="form-checkbox-group">
-                  <label class="form-check"><input type="radio" name="support_tier" value="one_time" required><span class="form-check__label">One-time build & handoff</span></label>
-                  <label class="form-check"><input type="radio" name="support_tier" value="continual"><span class="form-check__label">Continual maintenance, upgrades, and support</span></label>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-section">
-              <h3 class="form-section__title">06. Response Verifiability (RLVR Potential)</h3>
-              <p style="color: rgba(255,255,255,0.6); margin-top: -1rem; margin-bottom: 2rem; font-size: 0.95rem;">
-                If your AI's task has a definitive "right" or "wrong" outcome, we can drastically increase reasoning capabilities via Reinforcement Learning from Verifiable Rewards.
-              </p>
-              <div class="form-group">
-                <label class="form-label">Can the quality or correctness of a response be quantified programmatically? (e.g., via math check, compiler, or script)</label>
-                <div class="form-checkbox-group" style="flex-direction: row; gap: 2rem;">
-                  <label class="form-check"><input type="radio" name="verifiable" value="yes" required><span class="form-check__label">Yes, easily verifiable</span></label>
-                  <label class="form-check"><input type="radio" name="verifiable" value="no"><span class="form-check__label">No, it's subjective / creative</span></label>
-                  <label class="form-check"><input type="radio" name="verifiable" value="unsure"><span class="form-check__label">Unsure</span></label>
-                </div>
-              </div>
-              <div class="form-group" style="margin-top: 2rem;">
-                <label class="form-label">Are you or your team willing to test the AI and select preference pairs? (Required for DPO alignment)</label>
-                <div class="form-checkbox-group" style="flex-direction: row; gap: 2rem;">
-                  <label class="form-check"><input type="radio" name="dpo_willingness" value="yes" required><span class="form-check__label">Yes</span></label>
-                  <label class="form-check"><input type="radio" name="dpo_willingness" value="no"><span class="form-check__label">No</span></label>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-section" style="border-bottom: none;">
-              <h3 class="form-section__title">07. Additional Information</h3>
-              <div class="form-group">
-                <label for="compliance_security" class="form-label">Do you have regulatory constraints or security requirements?</label>
-                <input type="text" id="compliance_security" name="compliance_security" class="form-input" placeholder="e.g. HIPAA, SOC2, GDPR, Air-gapped environment">
-              </div>
-              <div class="form-group">
-                <label for="additional_info" class="form-label">Any additional requirements or context regarding your project?</label>
-                <textarea id="additional_info" name="additional_info" class="form-input" placeholder="Integration targets, specific hardware limits..."></textarea>
-              </div>
-            </div>
-
-            <div style="margin-top: 3rem;">
-              <div class="form-group" style="margin-bottom: 2rem;">
-                <label class="form-check">
-                  <input type="checkbox" name="email_copy" value="yes" checked>
-                  <span class="form-check__label">Email me a copy of this estimate</span>
-                </label>
-              </div>
-              <button type="submit" class="btn btn--primary" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.125rem;">Generate Quote</button>
-              <p style="text-align: center; color: rgba(255,255,255,0.4); font-size: 0.875rem; margin-top: 1rem;">Note: This is a preliminary AI-generated estimate.</p>
-            </div>
-          </form>
         </div>
       </div>
     </section>
@@ -375,114 +380,445 @@
     </div>
   </footer>
 
-  <script src="/js/main.js"></script>
-  <script>
-    document.getElementById('quote-form').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const form = e.target;
-      const submitFormData = new FormData(form);
-
-      const progressContainer = document.getElementById('ai-progress-container');
-      const progressBar = document.getElementById('ai-progress-bar');
-      const statusText = document.getElementById('ai-status-text');
-      const resultsDiv = document.getElementById('quote-results');
-      const formDiv = document.getElementById('quote-form');
-      const contentDiv = document.getElementById('quote-content');
-
-      formDiv.style.display = 'none';
-      progressContainer.style.display = 'block';
-      
-      statusText.innerText = 'Searching the web for existing solutions...';
-      progressBar.style.width = '5%';
+    <script src="/js/main.js"></script>
+    <script>
+      let heartbeatInterval;
+      let currentStateIndex = 0;
+      let baseFormDataObj = {};
       
       const states = [
-        { text: 'Analyzing web context for domain constraints...', width: '15%' },
-        { text: 'Generating HF queries and researching datasets...', width: '30%' },
-        { text: 'Evaluating Verifiability for RLVR architecture...', width: '45%' },
-        { text: 'Estimating compute requirements...', width: '60%' },
-        { text: 'Formulating context payload...', width: '75%' },
-        { text: 'Synthesizing final architecture with GPT-5.4...', width: '90%' },
-        { text: 'Finalizing JSON blueprint...', width: '95%' }
+        { progress: '10%', text: "Parsing internal project scope..." },
+        { progress: '20%', text: "Evaluating model feasibility and base model scale..." },
+        { progress: '30%', text: "Scanning domain constraints..." },
+        { progress: '40%', text: "Analyzing dataset parameters..." },
       ];
       
-      let currentStateIndex = 0;
-      let finalJsonStr = '';
-      
-      try {
-        const response = await fetch('/api/quote', {
-          method: 'POST',
-          body: submitFormData
-        });
+      const quoteStates = [
+        { progress: '50%', text: "Running GPT-5 architectural web research..." },
+        { progress: '65%', text: "Synthesizing HuggingFace dataset queries..." },
+        { progress: '75%', text: "Assembling AI infrastructure pipelines..." },
+        { progress: '85%', text: "Calculating deployment costs and RLVR training hours..." },
+        { progress: '95%', text: "Finalizing Projxon estimate sheet..." }
+      ];
 
-        if (!response.ok) {
-          throw new Error('Failed to generate quote');
-        }
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
+      function validateStep(stepIndex) {
+        const stepDiv = document.getElementById('step-' + stepIndex);
+        if (!stepDiv) return true;
+        let isValid = true;
+        const inputs = stepDiv.querySelectorAll('input:required, select:required, textarea:required');
         
-        // Actively read the streaming whitespace heartbeat
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          
-          const chunk = decoder.decode(value, { stream: true });
-          finalJsonStr += chunk;
-          
-          // Every time a pulse arrives (or a chunk is handled), try to advance the progress bar
-          if (currentStateIndex < states.length) {
-             const s = states[currentStateIndex];
-             statusText.innerText = s.text;
-             progressBar.style.width = s.width;
-             currentStateIndex++;
+        inputs.forEach(input => {
+          if (!input.disabled && !input.value.trim() && input.type !== 'radio' && input.type !== 'checkbox') {
+            isValid = false;
+            input.reportValidity();
+          }
+          if (input.type === 'radio') {
+             const groupName = input.name;
+             const checked = stepDiv.querySelector(`input[name="${groupName}"]:checked`);
+             if (!checked) {
+                isValid = false;
+                input.reportValidity();
+             }
+          }
+        });
+        return isValid;
+      }
+      
+      window.nextStep = function(currentStep) {
+        if (!validateStep(currentStep)) return;
+        
+        const currentDiv = document.getElementById('step-' + currentStep);
+        let nextStepNum = currentStep + 1;
+        
+        if (currentStep === 1) {
+          const entityType = document.getElementById('entity_type').value;
+          if (entityType === 'personal') {
+            nextStepNum = 3;
           }
         }
-
-        progressBar.style.width = '100%';
-        await new Promise(r => setTimeout(r, 400)); // Let the bar finish visually
-
-        // The parser ignores the massive leading whitespace block
-        const quoteData = JSON.parse(finalJsonStr);
-
-        progressContainer.style.display = 'none';
-        resultsDiv.style.display = 'block';
         
-        contentDiv.innerHTML = `
-          <div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
-            <div style="flex: 1; background: rgba(255,255,255,0.05); padding: 2rem; border-radius: 1rem;">
-              <h3 style="color: rgba(255,255,255,0.5); font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">One-Time Cost</h3>
-              <p style="font-size: 2.5rem; font-weight: bold; color: white; margin: 0;">${quoteData.one_time_cost || 'TBD'}</p>
-            </div>
-            <div style="flex: 1; background: rgba(255,255,255,0.05); padding: 2rem; border-radius: 1rem;">
-              <h3 style="color: rgba(255,255,255,0.5); font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Recurring Monthly</h3>
-              <p style="font-size: 2.5rem; font-weight: bold; color: white; margin: 0;">${quoteData.recurring_cost || '$0'}</p>
-            </div>
-          </div>
-          <hr style="border-color: rgba(255,255,255,0.1); margin: 2rem 0;">
-          <h3 style="color: #38bdf8; margin-bottom: 1.5rem; font-size: 1.5rem;">Analysis & Setup</h3>
-          
-          <div style="margin-bottom: 1.5rem;">
-            <p style="color: rgba(255,255,255,0.8); line-height: 1.6; font-size: 1.1rem; margin-bottom: 2rem;">${quoteData.feasibility_analysis || 'Custom architecture recommended.'}</p>
-            <h4 style="color: white; margin-bottom: 0.5rem; font-size: 1.1rem;">Training & Approaches</h4>
-            <p style="color: rgba(255,255,255,0.7); line-height: 1.6;">${quoteData.itemized_sheet?.training_methods || 'Custom architecture'}</p>
-          </div>
-          <div style="margin-bottom: 1.5rem;">
-            <h4 style="color: white; margin-bottom: 0.5rem; font-size: 1.1rem;">Data Processing</h4>
-            <p style="color: rgba(255,255,255,0.7); line-height: 1.6;">${quoteData.itemized_sheet?.data_processing || 'Custom pipeline'}</p>
-          </div>
-          <div style="margin-bottom: 1.5rem;">
-            <h4 style="color: white; margin-bottom: 0.5rem; font-size: 1.1rem;">Deployment Integration</h4>
-            <p style="color: rgba(255,255,255,0.7); line-height: 1.6;">${quoteData.itemized_sheet?.deployment || 'TBD'}</p>
-          </div>
-        `;
-      } catch (error) {
-        console.error('Quote Error:', error);
-        progressContainer.style.display = 'none';
-        formDiv.style.display = 'block'; // Show form again so they can retry
-        alert("There was an error generating your quote. Please ensure API keys are configured or try again later.");
+        const nextDiv = document.getElementById('step-' + nextStepNum);
+        
+        if (currentDiv && nextDiv) {
+          currentDiv.classList.remove('active');
+          nextDiv.classList.add('active');
+          updateProgressLines(nextStepNum);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      };
+
+      window.prevStep = function(currentStep) {
+        const currentDiv = document.getElementById('step-' + currentStep);
+        let prevStepNum = currentStep - 1;
+        
+        if (currentStep === 3) {
+          const entityType = document.getElementById('entity_type').value;
+          if (entityType === 'personal') {
+            prevStepNum = 1;
+          }
+        }
+        
+        const prevDiv = document.getElementById('step-' + prevStepNum);
+        
+        if (currentDiv && prevDiv) {
+          currentDiv.classList.remove('active');
+          prevDiv.classList.add('active');
+          updateProgressLines(prevStepNum);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      };
+      
+      function updateProgressLines(activeStep) {
+        const dots = document.querySelectorAll('.wizard-progress__dot');
+        let dotIndex = 0;
+        if (activeStep === 1) dotIndex = 0;
+        else if (activeStep === 2 || activeStep === 3) dotIndex = 1;
+        else if (activeStep === 4) dotIndex = 2; 
+        else if (activeStep === 5 || activeStep === 6) dotIndex = 3;
+        
+        dots.forEach((dot, index) => {
+          dot.classList.remove('active', 'completed');
+          if (index < dotIndex) dot.classList.add('completed');
+          else if (index === dotIndex) dot.classList.add('active');
+        });
       }
-    });
-  </script>
+
+      window.classifyNeeds = async function() {
+        if (!validateStep(3)) return;
+        
+        document.getElementById('step-3').classList.remove('active');
+        document.getElementById('step-4-loader').classList.add('active');
+        updateProgressLines(4);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        const purpose = document.getElementById('purpose').value;
+        const techCheckboxes = document.querySelectorAll('input[name="tech_needs"]:checked');
+        const techNeeds = Array.from(techCheckboxes).map(cb => cb.value);
+        
+        try {
+          const res = await fetch('/api/classify-needs', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ purpose, techNeeds })
+          });
+          
+          let routingData = { needs_custom_model: true, needs_rag: true, needs_app: true };
+          if (res.ok) {
+             routingData = await res.json();
+          }
+          
+          buildTechnicalUI(routingData);
+          document.getElementById('step-4-loader').classList.remove('active');
+          document.getElementById('step-4').classList.add('active');
+          
+        } catch (err) {
+          console.error(err);
+          buildTechnicalUI({ needs_custom_model: true, needs_rag: true, needs_app: true });
+          document.getElementById('step-4-loader').classList.remove('active');
+          document.getElementById('step-4').classList.add('active');
+        }
+      }
+      
+      function buildTechnicalUI(routing) {
+          const container = document.getElementById('dynamic_technical_content');
+          let html = '';
+          
+          if (routing.needs_custom_model) {
+              html += `
+              <div class="form-section" style="padding: 1.5rem; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; margin-bottom: 2rem;">
+                  <h4 style="color: #38bdf8; margin-top: 0; margin-bottom: 1rem;">Custom Model Requirements</h4>
+                  <div class="form-group">
+                      <label class="form-label">Training Data Availability</label>
+                      <div class="form-checkbox-group">
+                          <label class="form-check"><input type="radio" name="data_status" value="full_examples"><span class="form-check__label">I have task examples including all required information</span></label>
+                          <label class="form-check"><input type="radio" name="data_status" value="partial_examples"><span class="form-check__label">I have some contextual info, but not perfect examples</span></label>
+                          <label class="form-check"><input type="radio" name="data_status" value="no_examples"><span class="form-check__label">I have no examples to train on yet</span></label>
+                          <label class="form-check"><input type="radio" name="data_status" value="unsure"><span class="form-check__label">I'm not sure / Advise me</span></label>
+                      </div>
+                  </div>
+              </div>`;
+          }
+          
+          if (routing.needs_rag || routing.needs_search || routing.needs_automation || routing.needs_agentic_system) {
+              html += `
+              <div class="form-section" style="padding: 1.5rem; background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 8px; margin-bottom: 2rem;">
+                  <h4 style="color: #a855f7; margin-top: 0; margin-bottom: 1rem;">Data Search & Integration</h4>
+                  <div class="form-group">
+                      <label class="form-label">What format is the data we need to search or access?</label>
+                      <input type="text" name="rag_format" class="form-input" placeholder="e.g. PDF documents, SQL database, or 'I don't know'">
+                  </div>
+                  <div class="form-group" style="margin-top: 1.5rem;">
+                      <label class="form-label">Does the AI need to trigger actions in other software?</label>
+                      <input type="text" name="automation_tools" class="form-input" placeholder="e.g. Yes, draft emails in Gmail and create Salesforce records">
+                  </div>
+              </div>`;
+          }
+          
+          if (routing.needs_app || routing.needs_frontend) {
+              html += `
+              <div class="form-section" style="padding: 1.5rem; background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 8px; margin-bottom: 2rem;">
+                  <h4 style="color: #22c55e; margin-top: 0; margin-bottom: 1rem;">Application Interface</h4>
+                  <div class="form-group">
+                      <label class="form-label">Do you need a completely custom bespoke UI, or can we use our standard chat template?</label>
+                      <div class="form-checkbox-group">
+                          <label class="form-check"><input type="radio" name="app_complexity" value="template"><span class="form-check__label">Standard Template is fine (Faster/Cheaper)</span></label>
+                          <label class="form-check"><input type="radio" name="app_complexity" value="custom"><span class="form-check__label">Totally Custom UI (Pixel-perfect bespoke design)</span></label>
+                          <label class="form-check"><input type="radio" name="app_complexity" value="unsure"><span class="form-check__label">I'm not sure / Advise me</span></label>
+                      </div>
+                  </div>
+              </div>`;
+          }
+          
+          // Deployment and general inputs are always relevant
+          html += `
+          <div class="form-section" style="padding: 1.5rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px;">
+              <h4 style="color: #fff; margin-top: 0; margin-bottom: 1rem;">Infrastructure Targets</h4>
+              <div class="form-group">
+                  <label class="form-label">Data & Deployment Preference</label>
+                  <div class="form-checkbox-group" style="flex-direction: row; flex-wrap: wrap; align-items: flex-start; gap: 1rem;">
+                      <label class="form-check"><input type="radio" name="deployment" value="cloud"><span class="form-check__label">Cloud Server (Projxon hosts it)</span></label>
+                      <label class="form-check"><input type="radio" name="deployment" value="private_cloud"><span class="form-check__label">Private Cloud (Your AWS/Azure)</span></label>
+                      <label class="form-check"><input type="radio" name="deployment" value="on_prem"><span class="form-check__label">Local Hardware (Your Office / Mac / Ollama)</span></label>
+                      <label class="form-check"><input type="radio" name="deployment" value="unsure"><span class="form-check__label">I'm not sure / Advise me</span></label>
+                  </div>
+              </div>
+          </div>`;
+          
+          container.innerHTML = html;
+      }
+
+      document.getElementById('quote-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (!validateStep(5)) return;
+
+        document.getElementById('step-5').classList.remove('active');
+        document.getElementById('step-6').classList.add('active'); 
+        updateProgressLines(6);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        document.getElementById('ai-progress-container').style.display = 'block';
+        
+        const progressBar = document.getElementById('ai-progress-bar');
+        const statusText = document.getElementById('ai-status-text');
+        
+        currentStateIndex = 0;
+        heartbeatInterval = setInterval(() => {
+          if (currentStateIndex < states.length) {
+            progressBar.style.width = states[currentStateIndex].progress;
+            statusText.textContent = states[currentStateIndex].text;
+            currentStateIndex++;
+          }
+        }, 3000);
+
+        const formEl = document.getElementById('quote-form');
+        const submitFormData = new FormData(formEl);
+        
+        for (const [key, value] of submitFormData.entries()) {
+          baseFormDataObj[key] = value;
+        }
+
+        try {
+          const clarifyResponse = await fetch('/api/clarify', {
+            method: 'POST',
+            body: submitFormData
+          });
+          
+          clearInterval(heartbeatInterval);
+          progressBar.style.width = '45%';
+          
+          if (!clarifyResponse.ok) throw new Error('Clarify API failed.');
+          
+          const clarifyData = await clarifyResponse.json();
+          const questions = clarifyData.questions || [];
+
+          if (questions.length === 0) {
+            statusText.textContent = "Scope defined perfectly. Generating quote...";
+            executeFinalQuote(submitFormData);
+          } else {
+            document.getElementById('ai-progress-title').textContent = "Clarifications Needed";
+            statusText.textContent = "Our AI Architect needs a few more details to map your infrastructure.";
+            document.getElementById('loading-bar-wrapper').style.display = 'none';
+            
+            const qaWrapper = document.getElementById('qa-questions-wrapper');
+            qaWrapper.innerHTML = '';
+            
+            questions.forEach((q, i) => {
+              qaWrapper.innerHTML += `
+                <div class="card card--glass" style="margin-bottom: 2rem; padding: 1.5rem; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2);">
+                  <label class="form-label" style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 1rem; display: block;">Q${i+1}: ${q}</label>
+                  <textarea id="qa_${i}" class="form-input" placeholder="Your answer..." required style="min-height: 80px;"></textarea>
+                  <input type="hidden" id="qa_question_${i}" value="${q}">
+                </div>
+              `;
+            });
+            
+            document.getElementById('ai-qa-container').style.display = 'block';
+          }
+        } catch (error) {
+          clearInterval(heartbeatInterval);
+          statusText.textContent = "An error occurred validating the scope. Please try again.";
+        }
+      });
+      
+      window.submitFinalAnswersAndQuote = function() {
+        let isValid = true;
+        document.getElementById('qa-questions-wrapper').querySelectorAll('textarea[required]').forEach(input => {
+          if (!input.value.trim()) {
+            isValid = false;
+            input.reportValidity();
+          }
+        });
+        
+        if (!isValid) return;
+
+        document.getElementById('ai-qa-container').style.display = 'none';
+        document.getElementById('ai-progress-title').textContent = "Synthesizing Architecture...";
+        document.getElementById('loading-bar-wrapper').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        const progressBar = document.getElementById('ai-progress-bar');
+        const statusText = document.getElementById('ai-status-text');
+        
+        currentStateIndex = 0;
+        heartbeatInterval = setInterval(() => {
+          if (currentStateIndex < quoteStates.length) {
+            progressBar.style.width = quoteStates[currentStateIndex].progress;
+            statusText.textContent = quoteStates[currentStateIndex].text;
+            currentStateIndex++;
+          }
+        }, 5000);
+
+        const qaHistory = [];
+        let i = 0;
+        while (document.getElementById(`qa_${i}`)) {
+          qaHistory.push({
+            question: document.getElementById(`qa_question_${i}`).value,
+            answer: document.getElementById(`qa_${i}`).value
+          });
+          i++;
+        }
+        
+        const finalPayload = new FormData();
+        Object.keys(baseFormDataObj).forEach(key => finalPayload.append(key, baseFormDataObj[key]));
+        finalPayload.append('qa_history', JSON.stringify(qaHistory));
+        
+        executeFinalQuote(finalPayload);
+      };
+
+      async function executeFinalQuote(finalPayload) {
+        try {
+          const response = await fetch('/api/quote', {
+            method: 'POST',
+            body: finalPayload
+          });
+
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder('utf-8');
+          let finalJsonStr = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            const chunk = decoder.decode(value, { stream: true });
+            // Only accumulate chunks that are JSON-like (not the heartbeat spaces)
+            const trimmed = chunk.trim();
+            if (trimmed !== '') finalJsonStr += trimmed;
+          }
+
+          clearInterval(heartbeatInterval);
+          document.getElementById('ai-progress-bar').style.width = '100%';
+          document.getElementById('ai-status-text').textContent = "Hardware configured.";
+          
+          try {
+            const quoteData = JSON.parse(finalJsonStr);
+            if (quoteData.error) {
+              document.getElementById('ai-status-text').style.color = '#ef4444';
+              document.getElementById('ai-status-text').textContent = "Generation failed: " + quoteData.error;
+              return;
+            }
+
+            document.getElementById('step-6').style.display = 'none';
+            document.getElementById('ai-progress-container').style.display = 'none';
+            document.getElementById('quote-form').style.display = 'none';
+            document.getElementById('quote-results').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            const contentHtml = `
+              <div class="card card--glass" style="padding: 2rem; margin-bottom: 1.5rem; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                  <div>
+                    <span style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #38bdf8; font-weight: 600;">Estimated Setup</span>
+                    <div style="font-size: 2.5rem; font-weight: 700; color: #fff; line-height: 1;">${quoteData.one_time_cost}</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <span style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.5);">Estimated Monthly</span>
+                    <div style="font-size: 1.5rem; font-weight: 600; color: rgba(255,255,255,0.9);">${quoteData.recurring_cost}</div>
+                  </div>
+                </div>
+                <div style="padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                  <strong style="color: #fff; font-size: 1.1rem; display: block; margin-bottom: 0.5rem;">Architecture Feasibility</strong>
+                  <p style="margin: 0; font-size: 0.95rem;">${quoteData.feasibility_analysis}</p>
+                </div>
+              </div>
+
+              <div class="grid grid--3" style="gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="card" style="padding: 1.5rem; background: rgba(255,255,255,0.02);">
+                  <div style="font-weight: 600; color: #38bdf8; margin-bottom: 0.5rem;">Target Approach</div>
+                  <p style="font-size: 0.9rem; margin: 0;">${quoteData.itemized_sheet.training_methods}</p>
+                </div>
+                <div class="card" style="padding: 1.5rem; background: rgba(255,255,255,0.02);">
+                  <div style="font-weight: 600; color: #38bdf8; margin-bottom: 0.5rem;">Data Operations</div>
+                  <p style="font-size: 0.9rem; margin: 0;">${quoteData.itemized_sheet.data_processing}</p>
+                </div>
+                <div class="card" style="padding: 1.5rem; background: rgba(255,255,255,0.02);">
+                  <div style="font-weight: 600; color: #38bdf8; margin-bottom: 0.5rem;">Infrastructure Pipeline</div>
+                  <p style="font-size: 0.9rem; margin: 0;">${quoteData.itemized_sheet.deployment}</p>
+                </div>
+              </div>
+            `;
+            document.getElementById('quote-content').innerHTML = contentHtml;
+            
+          } catch(e) {
+            console.error("Parse Error:", e);
+            document.getElementById('ai-status-text').style.color = '#ef4444';
+            document.getElementById('ai-status-text').textContent = "Data pipeline failed to align. We've been notified.";
+          }
+        } catch (error) {
+          clearInterval(heartbeatInterval);
+          console.error("Pipeline Error:", error);
+          document.getElementById('ai-status-text').style.color = '#ef4444';
+          document.getElementById('ai-status-text').textContent = "An error occurred generating the architecture. Please try again.";
+        }
+      }
+
+      window.toggleEntityFields = function(val) {
+        const sizeContainer = document.getElementById('entity_size_container');
+        const companyContainer = document.getElementById('company_container');
+        const companyInput = document.getElementById('company');
+
+        if (val === 'personal') {
+          if(sizeContainer) sizeContainer.style.display = 'none';
+          if(companyContainer) companyContainer.style.display = 'none';
+          if(companyInput) {
+             companyInput.required = false;
+             companyInput.disabled = true;
+          }
+        } else {
+          if(companyContainer) companyContainer.style.display = 'block';
+          if(companyInput) {
+             companyInput.required = true;
+             companyInput.disabled = false;
+          }
+          if(sizeContainer) {
+            if (val === 'startup' || val === 'enterprise' || val === 'nonprofit' || val === 'education') {
+               sizeContainer.style.display = 'block';
+            } else {
+               sizeContainer.style.display = 'none';
+            }
+          }
+        }
+      };
+    </script>
 </body>
 </html>

@@ -91,20 +91,20 @@ export default async function handler(req) {
       name: reqForm.get('name'),
       email: reqForm.get('email'),
       company: reqForm.get('company'),
-      entity_type: reqForm.get('entity_type'),
-      entity_size: reqForm.get('entity_size'),
+      deliverable: reqForm.get('deliverable') || 'Unknown',
+      app_complexity: reqForm.get('app_complexity') || 'N/A',
+      training_type: reqForm.get('training_type') || 'N/A',
+      execution_method: reqForm.get('execution_method') || 'N/A',
+      ai_engine_preference: reqForm.get('ai_engine_preference') || 'N/A',
       purpose: reqForm.get('purpose'),
-      objectives: reqForm.getAll('objectives'),
-      existing_models: reqForm.get('existing_models'),
-      model_failure: reqForm.get('model_failure'),
       input_modalities: reqForm.getAll('input_modalities'),
       output_modalities: reqForm.getAll('output_modalities'),
       latency: reqForm.get('latency'),
       deployment: reqForm.get('deployment'),
+      support_tier: reqForm.get('support_tier'),
       data_status: reqForm.get('data_status'),
       data_scale: reqForm.get('data_scale'),
       data_quality: reqForm.get('data_quality'),
-      support_tier: reqForm.get('support_tier'),
       verifiable: reqForm.get('verifiable'),
       dpo_willingness: reqForm.get('dpo_willingness'),
       additional_info: reqForm.get('additional_info'),
@@ -115,19 +115,38 @@ export default async function handler(req) {
       success_metrics: reqForm.get('success_metrics'),
       data_freshness: reqForm.get('data_freshness'),
       compliance_security: reqForm.get('compliance_security'),
+      project_scale: reqForm.get('project_scale') || 'Unknown',
+      // Legacy generic fields mapping
+      entity_type: reqForm.get('entity_type') || 'Unknown',
+      entity_size: reqForm.get('entity_size') || 'Unknown',
     };
+    
+    // Parse Q&A History
+    let qaHistoryStr = '';
+    try {
+      const qaRaw = reqForm.get('qa_history');
+      if (qaRaw) {
+        const qaArray = JSON.parse(qaRaw);
+        qaArray.forEach((item, i) => {
+          qaHistoryStr += `Q${i+1}: ${item.question}\nA: ${item.answer}\n\n`;
+        });
+      }
+    } catch (e) {
+      console.error("Failed to parse QA history");
+    }
     
     // Check if file was uploaded and extract its text content to feed the LLM
     const file = reqForm.get('data_examples');
     let fileName = 'None';
     let fileContentSnippet = 'None provided.';
+    let fileBuffer = null;
     
     if (file && file.name) {
       fileName = file.name;
       try {
-        const buffer = await file.arrayBuffer();
+        fileBuffer = await file.arrayBuffer();
         const decoder = new TextDecoder('utf-8');
-        const fullText = decoder.decode(buffer);
+        const fullText = decoder.decode(fileBuffer);
         // Take an aggressive 5k char snippet to avoid blowing up the context window
         fileContentSnippet = fullText.slice(0, 5000); 
       } catch (err) {
@@ -136,17 +155,28 @@ export default async function handler(req) {
       }
     }
 
-    // 1. Initial Feasibility Research (GPT-5 with Search)
-    const researchPrompt = `
-      You are an elite AI architect at Projxon AI. A potential client wants to build:
-      Purpose: ${formData.purpose}
-      Objectives: ${formData.objectives?.join(', ')}
-      They claim existing models (like GPT-5/Gemini-3) handle it like this: ${formData.existing_models}. Reason: ${formData.model_failure || 'N/A'}.
+    // Build exhaustive list of all inputs for the Admin email payload
+    let allInputsHtml = '';
+    for (const [key, value] of reqForm.entries()) {
+      if (key === 'data_examples' || key === 'contact_last_name_confirm') continue;
+      allInputsHtml += `<p><strong>${key}:</strong> ${value}</p>`;
+    }
 
-      Use your search capability to find existing solutions, feasibility, and technical hurdles for this exact use case.
-      IMPORTANT: Only use what you found in the search explicitly. Exclude any results from HuggingFace (HF) as we handle that separately.
-      Return a brief technical feasibility assessment.
-    `;
+    // 1. Initial Feasibility Research (GPT-5 with Search)
+    // This block is now redundant and will be replaced by the one inside the stream.
+    // const researchPrompt = `
+    //   You are an elite AI architect at Projxon AI. A potential client wants to build:
+    //   Route: ${formData.project_route}
+    //   Purpose: ${formData.purpose}
+    //   They claim existing models (like GPT-5/Gemini-3) handle it like this: ${formData.existing_models}. Reason: ${formData.model_failure || 'N/A'}.
+      
+    //   AI Q&A Context:
+    //   ${qaHistoryStr || 'None provided.'}
+
+    //   Use your search capability to find existing solutions, feasibility, and technical hurdles for this exact use case.
+    //   IMPORTANT: Only use what you found in the search explicitly. Exclude any results from HuggingFace (HF) as we handle that separately.
+    //   Return a brief technical feasibility assessment.
+    // `;
 
     // We return a stream so Vercel Edge doesn't timeout after 25 seconds.
     const encoder = new TextEncoder();
@@ -164,9 +194,11 @@ export default async function handler(req) {
           // 1. Initial Feasibility Research (GPT-5 with Search) & 2. HF Search Query Generation
           const researchPrompt = `
             You are an elite AI architect at Projxon AI. A potential client wants to build:
+            Deliverable Route: ${formData.deliverable}
             Purpose: ${formData.purpose}
-            Objectives: ${formData.objectives?.join(', ')}
-            They claim existing models (like GPT-5/Gemini-3) handle it like this: ${formData.existing_models}. Reason: ${formData.model_failure || 'N/A'}.
+            
+            AI Q&A Context:
+            ${qaHistoryStr || 'None provided.'}
 
             Use your search capability to find existing solutions, feasibility, and technical hurdles for this exact use case.
             IMPORTANT: Only use what you found in the search explicitly. Exclude any results from HuggingFace (HF) as we handle that separately.
@@ -184,7 +216,7 @@ export default async function handler(req) {
             openai.responses.create({
               model: 'gpt-5-mini',
               input: [{ role: 'user', content: researchPrompt }],
-              tools: [{ type: "web_search" }],
+              tools: [{ type: "web_search" }], // THIS IS REQUIRED!!!
             }),
             openai.responses.create({
               model: 'gpt-5-mini',
@@ -200,13 +232,20 @@ export default async function handler(req) {
           for (const query of hfQueries) {
             if (!query) continue;
             try {
-               const hfRes = await fetch(`https://huggingface.co/api/datasets?search=${encodeURIComponent(query)}&limit=3`);
+               const controller = new AbortController();
+               const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout so the pipe doesn't hang
+               
+               const hfRes = await fetch(`https://huggingface.co/api/datasets?search=${encodeURIComponent(query)}&limit=3`, {
+                   signal: controller.signal
+               });
+               clearTimeout(timeoutId);
+               
                if (hfRes.ok) {
                  const data = await hfRes.json();
                  hfDatasets.push(...data.map(d => d.id));
                }
             } catch (e) {
-               console.error('HF Search Error:', e);
+               console.error('HF Search Timeout or Error:', e.message);
             }
           }
 
@@ -217,8 +256,17 @@ export default async function handler(req) {
 
             CLIENT CONSTRAINTS:
             - Entity: ${formData.entity_type} (Size: ${formData.entity_size || 'N/A'})
-            - Objective: ${formData.objectives?.join(', ')}
+            - Expected Project Scale: ${formData.project_scale}
+            - Primary Deliverable: ${formData.deliverable}
+            - AI Engine Preference (App/Automation): ${formData.ai_engine_preference}
+            - App Complexity (if app): ${formData.app_complexity}
+            - Training Request (if model base): ${formData.training_type}
+            - Target Execution Method (if model base): ${formData.execution_method}
             - Domain: ${formData.purpose}
+            
+            INTERACTIVE AI Q&A HISTORY:
+            ${qaHistoryStr || 'No clarifying questions were needed.'}
+
             - Input Modalities: ${formData.input_modalities?.join(', ')}
             - Output Modalities: ${formData.output_modalities?.join(', ')}
             - Latency: ${formData.latency}
@@ -259,6 +307,7 @@ export default async function handler(req) {
                 "deployment": "Where it runs and how it scales."
               }
             }
+              One-time cost and Recurring Cost MUST be ranges. Be broad, you are estimating before the final consultation.
             
             ABOUT PROJXON & PRICING:
             Projxon AI is a company specializing in getting totally custom and unique AI systems built for a company's specific needs. Our in house experts are open to any challenge, they are skilled in tasks from app development to pre-training to fine-tuning and will happily pioneer entirely new approaches. We take projects of all size from simple fine-tunes using existing datasets we can do for $50 to big multi-year projects in the hundreds of thousands. Your goal is to provide an estimated price range from the information and do a preliminary analysis prior to a full consultation. We do things the efficient way. The costs of a project depends on the size of the model being trained, the type of training, the scale of training, as well as other factors. For dense models <40B on datasets in the tens of thousand of examples, the training cost itself is pretty low, a few hundred bucks at most. It's the data collection, app development, and deployment where the money usually goes. Now bigger models, or RL, DPO, or other things like that of course add to that cost. Models bigger than 40-50B params require specialized training setups and cost a premium.
@@ -305,31 +354,28 @@ export default async function handler(req) {
 
           // 5. Send Internal Email to Projxon Team via Resend
           try {
-            await resend.emails.send({
+            const adminEmailPayload = {
               from: 'quotes@projxon.ai',
               to: 'admin@projxon.ai',
               subject: `New AI Quote Lead: ${formData.company || formData.name}`,
               html: `
                 <h2>New Lead: ${formData.company}</h2>
-                <p><strong>Name:</strong> ${formData.name}</p>
-                <p><strong>Email:</strong> ${formData.email}</p>
-                <p><strong>Use Case:</strong> ${formData.purpose}</p>
-                <p><strong>Current Workflow:</strong> ${formData.current_workflow || 'N/A'}</p>
-                <p><strong>Success Metrics:</strong> ${formData.success_metrics || 'N/A'}</p>
-                <p><strong>Deployment:</strong> ${formData.deployment}</p>
-                <p><strong>Data Freshness:</strong> ${formData.data_freshness || 'N/A'}</p>
-                <p><strong>RAG Format:</strong> ${formData.rag_format || 'None'}</p>
-                <p><strong>Automation Tools:</strong> ${formData.automation_tools || 'None'}</p>
-                <p><strong>Verifiable:</strong> ${formData.verifiable}</p>
-                <p><strong>Prepared for DPO:</strong> ${formData.dpo_willingness}</p>
-                <p><strong>Compliance/Security:</strong> ${formData.compliance_security || 'None'}</p>
-                <p><strong>Data Upload:</strong> ${fileName}</p>
-                <p><strong>Additional Info:</strong> ${formData.additional_info}</p>
+                <p><strong>Estimated Scale:</strong> ${formData.project_scale}</p>
+                <h3>--- Full Form Submission Data ---</h3>
+                ${allInputsHtml}
+                <hr/>
+                <h3>--- AI Clarification Q&A Transcript ---</h3>
+                <pre style="white-space: pre-wrap; background: #fef08a; padding: 1rem;">${qaHistoryStr || 'No clarifying questions were needed / bypassed.'}</pre>
+                <hr/>
+                <h3>Data Upload File Status</h3>
+                <p><strong>File Name:</strong> ${fileName}</p>
                 <br/>
                 <h3>AI Quote Generated</h3>
                 <p><strong>One Time:</strong> ${quoteData.one_time_cost}</p>
                 <p><strong>Recurring:</strong> ${quoteData.recurring_cost}</p>
                 <p><strong>Training Methods:</strong> ${quoteData.itemized_sheet?.training_methods}</p>
+                <p><strong>Data Processing:</strong> ${quoteData.itemized_sheet?.data_processing}</p>
+                <p><strong>Deployment:</strong> ${quoteData.itemized_sheet?.deployment}</p>
                 <br/><hr/><br/>
                 <h3>GPT-5.4 Raw Internal Rationale (Unedited)</h3>
                 <pre style="white-space: pre-wrap; background: #e0f2fe; padding: 1rem;">${quoteData.full_internal_analysis}</pre>
@@ -337,10 +383,23 @@ export default async function handler(req) {
                 <pre style="white-space: pre-wrap; background: #f4f4f5; padding: 1rem;">${webContext || 'None'}</pre>
                 <h3>HuggingFace Datasets Found</h3>
                 <p>${hfDatasets.join(', ') || 'None'}</p>
-                <h3>Raw Uploaded Data Sample (Snippet)</h3>
+                <h3>Raw Uploaded Data Sample (Snippet Sent to LLM)</h3>
                 <pre style="white-space: pre-wrap; background: #f4f4f5; padding: 1rem;">${fileContentSnippet || 'None'}</pre>
               `
-            });
+            };
+
+            // Attach the full file to the admin email if it exists
+            if (file && file.name && fileBuffer) {
+              // We pass the raw buffer to Resend attachments
+              adminEmailPayload.attachments = [
+                {
+                  filename: file.name,
+                  content: Buffer.from(fileBuffer)
+                }
+              ];
+            }
+
+            await resend.emails.send(adminEmailPayload);
 
             if (formData.email_copy === 'yes' && formData.email) {
               await resend.emails.send({
