@@ -535,7 +535,8 @@
     max-width: 920px;
     margin: 0 auto;
     text-align: center;
-    padding: $space-12 0 $space-20;
+    padding: $space-20 0 $space-20;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
   }
 
   &__section-heading {
@@ -597,7 +598,18 @@
     margin: 0 auto;
     text-align: center;
     padding: $space-24 0 $space-20;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
   }
+}
+
+// Dark page section separation
+.page--dark .section {
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  background: #0b0b0f;
+}
+
+.page--dark .cta {
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 // Scroll-reveal animation
@@ -618,7 +630,9 @@
 // PROCESS TIMELINE (About page)
 // ===================================
 .process-section {
-  background: #050505;
+  background: #0b0b0f;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   padding: $space-20 0 $space-24;
 
   &__inner {
