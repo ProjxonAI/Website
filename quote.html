@@ -1,552 +1,1190 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Request a custom AI quote from Projxon AI. Private, advanced reasoning architectures tailored to your business.">
-  <title>Pricing Estimator - Projxon AI</title>
-  <link rel="canonical" href="https://projxon.ai/quote.html">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="icon" type="image/svg+xml" href="/static/asset/image/logo/x_dark.svg">
-</head>
-<body class="page page--dark">
-  <!-- Navigation -->
-  <nav class="nav" id="nav">
-    <div class="nav__container">
-      <a href="/" class="nav__logo" aria-label="Projxon AI home">
-        <img src="/static/asset/image/logo/wordmark_dark.svg" alt="Projxon AI wordmark">
-      </a>
-      
-      <ul class="nav__menu">
-        <li><a href="/" class="nav__link">Home</a></li>
-        <li><a href="/about.html" class="nav__link">About</a></li>
-        <li><a href="/team.html" class="nav__link">Team</a></li>
-      </ul>
-      
-      <div class="nav__actions">
-        <button class="nav__toggle" id="nav-toggle" aria-label="Toggle menu">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 12h18M3 6h18M3 18h18"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </nav>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta
+			name="description"
+			content="Request a custom AI quote from Projxon AI. Private, advanced reasoning architectures tailored to your business."
+		/>
+		<title>Pricing Estimator - Projxon AI</title>
+		<link rel="canonical" href="https://projxon.ai/quote.html" />
+		<link rel="stylesheet" href="/css/style.css" />
+		<link
+			rel="icon"
+			type="image/svg+xml"
+			href="/static/asset/image/logo/x_dark.svg"
+		/>
+	</head>
+	<body class="page page--dark">
+		<!-- Navigation -->
+		<nav class="nav" id="nav">
+			<div class="nav__container">
+				<a href="/" class="nav__logo" aria-label="Projxon AI home">
+					<img
+						src="/static/asset/image/logo/wordmark_dark.svg"
+						alt="Projxon AI wordmark"
+					/>
+				</a>
 
-  <!-- Mobile Menu -->
-  <div class="mobile-menu" id="mobile-menu">
-    <ul class="mobile-menu__list">
-      <li><a href="/" class="mobile-menu__link">Home</a></li>
-      <li><a href="/about.html" class="mobile-menu__link">About</a></li>
-      <li><a href="/team.html" class="mobile-menu__link">Team</a></li>
-    </ul>
-  </div>
+				<ul class="nav__menu">
+					<li><a href="/" class="nav__link">Home</a></li>
+					<li><a href="/about.html" class="nav__link">About</a></li>
+					<li><a href="/team.html" class="nav__link">Team</a></li>
+				</ul>
 
-  <main class="flow">
-    <!-- Hero -->
-    <div class="flow__hero" style="min-height: 40vh; padding-bottom: 2rem;">
-      <h1 class="flow__headline" style="font-size: clamp(3rem, 6vw, 4.5rem);">
-        Pricing <span class="gradient-text">Estimator</span>
-      </h1>
-      <p class="flow__subline">
-        Fill out this application to receive an instant, AI-generated baseline estimate. This process takes less than 5 minutes. Final pricing will be determined after a consultation.
-      </p>
-    </div>
+				<div class="nav__actions">
+					<button class="nav__toggle" id="nav-toggle" aria-label="Toggle menu">
+						<svg
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+						>
+							<path d="M3 12h18M3 6h18M3 18h18" />
+						</svg>
+					</button>
+				</div>
+			</div>
+		</nav>
 
-    <!-- Form Section -->
-    <section class="section" style="padding-top: 0; padding-bottom: 6rem;">
-      <div class="container container--narrow">
-        <div class="card card--glass" style="padding: 3rem; border-radius: 1.5rem; max-width: 800px; margin: 0 auto; position: relative; overflow: hidden;">
-          
-          <!-- Wizard content follows -->
+		<!-- Mobile Menu -->
+		<div class="mobile-menu" id="mobile-menu">
+			<ul class="mobile-menu__list">
+				<li><a href="/" class="mobile-menu__link">Home</a></li>
+				<li><a href="/about.html" class="mobile-menu__link">About</a></li>
+				<li><a href="/team.html" class="mobile-menu__link">Team</a></li>
+			</ul>
+		</div>
 
-          <style>
-            .wizard-step {
-              display: none;
-              animation: fadeIn 0.4s ease-out;
-            }
-            .wizard-step.active {
-              display: block;
-            }
-            @keyframes fadeIn {
-              from { opacity: 0; transform: translateY(10px); }
-              to { opacity: 1; transform: translateY(0); }
-            }
-            .wizard-progress {
-              display: flex;
-              gap: 8px;
-              margin-bottom: 2.5rem;
-            }
-            .wizard-progress__dot {
-              flex: 1;
-              height: 4px;
-              background: rgba(255,255,255,0.1);
-              border-radius: 2px;
-              transition: background 0.3s ease;
-            }
-            .wizard-progress__dot.active {
-              background: #4ade80;
-            }
-            .wizard-progress__dot.completed {
-              background: rgba(74, 222, 128, 0.4);
-            }
-            .wizard-nav {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-top: 3rem;
-              padding-top: 2rem;
-              border-top: 1px solid rgba(255,255,255,0.05);
-            }
-          </style>
+		<main class="flow">
+			<!-- Hero -->
+			<div class="flow__hero" style="min-height: 40vh; padding-bottom: 2rem">
+				<h1 class="flow__headline" style="font-size: clamp(3rem, 6vw, 4.5rem)">
+					Pricing <span class="gradient-text">Estimator</span>
+				</h1>
+				<p class="flow__subline">
+					Fill out this application to receive an instant, AI-generated baseline
+					estimate. This process takes less than 5 minutes. Final pricing will
+					be determined after a consultation.
+				</p>
+			</div>
 
-          <form id="quote-form" action="#" method="POST" enctype="multipart/form-data">
-            
-            <!-- Wizard Progress Indicator -->
-            <div class="wizard-progress" id="wizard-progress">
-              <div class="wizard-progress__dot active"></div>
-              <div class="wizard-progress__dot"></div>
-              <div class="wizard-progress__dot"></div>
-              <div class="wizard-progress__dot"></div>
-            </div>
-            
-            <!-- Step 1: Identity -->
-            <div class="wizard-step active" id="step-1">
-              <div class="form-section" style="border: none; padding: 0; margin-bottom: 0;">
-                <h3 class="form-section__title" style="font-size: 1.5rem;">Let's get introduced.</h3>
-                <div class="form-group">
-                  <label for="name" class="form-label">Full Name</label>
-                  <input type="text" id="name" name="name" class="form-input" placeholder="Jane Doe" required>
-                </div>
-                <div class="form-group">
-                  <label for="email" class="form-label">Email Address</label>
-                  <input type="email" id="email" name="email" class="form-input" placeholder="jane@example.com" required>
-                </div>
-                <div class="form-group" style="margin-top: 1rem;">
-                  <label for="entity_type" class="form-label">Who is this for?</label>
-                  <select id="entity_type" name="entity_type" class="form-input" style="padding-right: 2rem; appearance: auto;" required>
-                    <option value="" disabled selected>Select an option...</option>
-                    <option value="personal">Personal / Individual</option>
-                    <option value="startup">Startup / Small Business</option>
-                    <option value="enterprise">Enterprise</option>
-                    <option value="nonprofit">Non-Profit / NGO</option>
-                    <option value="education">Education / Research</option>
-                  </select>
-                </div>
-              </div>
-              <div class="wizard-nav" style="justify-content: flex-end;">
-                <button type="button" class="btn btn--primary" onclick="nextStep(1)">Next Step &rarr;</button>
-              </div>
-            </div>
+			<!-- Form Section -->
+			<section class="section" style="padding-top: 0; padding-bottom: 6rem">
+				<div class="container container--narrow">
+					<div
+						class="card card--glass"
+						style="
+							padding: 3rem;
+							border-radius: 1.5rem;
+							max-width: 800px;
+							margin: 0 auto;
+							position: relative;
+							overflow: hidden;
+						"
+					>
+						<!-- Wizard content follows -->
 
-            <!-- Step 2: Organization Info -->
-            <div class="wizard-step" id="step-2">
-              <div class="form-section" style="border: none; padding: 0; margin-bottom: 0;">
-                <h3 class="form-section__title" style="font-size: 1.5rem;">Tell us about your organization.</h3>
-                <div class="form-group">
-                  <label for="company" class="form-label">Organization Name</label>
-                  <input type="text" id="company" name="company" class="form-input" placeholder="Acme Corp">
-                </div>
-                <div class="form-group">
-                  <label for="website" class="form-label">Website (Optional)</label>
-                  <input type="url" id="website" name="website" class="form-input" placeholder="https://example.com">
-                </div>
-                <div class="form-group">
-                  <label for="entity_size" class="form-label">Estimated Number of Employees/Users</label>
-                  <input type="text" id="entity_size" name="entity_size" class="form-input" placeholder="e.g. 10-50">
-                </div>
-                <div class="form-group">
-                  <label for="industry" class="form-label">Industry Sector</label>
-                  <input type="text" id="industry" name="industry" class="form-input" placeholder="e.g. Healthcare, Finance, E-commerce">
-                </div>
-              </div>
-              <div class="wizard-nav">
-                <button type="button" class="btn btn--ghost-light" onclick="prevStep(2)">&larr; Back</button>
-                <button type="button" class="btn btn--primary" onclick="nextStep(2)">Scope Requirements &rarr;</button>
-              </div>
-            </div>
+						<style>
+							.wizard-step {
+								display: none;
+								animation: fadeIn 0.4s ease-out;
+							}
+							.wizard-step.active {
+								display: block;
+							}
+							@keyframes fadeIn {
+								from {
+									opacity: 0;
+									transform: translateY(10px);
+								}
+								to {
+									opacity: 1;
+									transform: translateY(0);
+								}
+							}
+							.wizard-progress {
+								display: flex;
+								gap: 8px;
+								margin-bottom: 2.5rem;
+							}
+							.wizard-progress__dot {
+								flex: 1;
+								height: 4px;
+								background: rgba(255, 255, 255, 0.1);
+								border-radius: 2px;
+								transition: background 0.3s ease;
+							}
+							.wizard-progress__dot.active {
+								background: #4ade80;
+							}
+							.wizard-progress__dot.completed {
+								background: rgba(74, 222, 128, 0.4);
+							}
+							.wizard-nav {
+								display: flex;
+								justify-content: space-between;
+								align-items: center;
+								margin-top: 3rem;
+								padding-top: 2rem;
+								border-top: 1px solid rgba(255, 255, 255, 0.05);
+							}
+						</style>
 
-            <!-- Step 3: The Problem -->
-            <div class="wizard-step" id="step-3">
-              <div class="form-section" style="border: none; padding: 0; margin-bottom: 0;">
-                <h3 class="form-section__title" style="font-size: 1.5rem;">What are we building?</h3>
-                <div class="form-group">
-                  <label for="purpose" class="form-label">In plain english, what should this AI system do?</label>
-                  <textarea id="purpose" name="purpose" class="form-input" style="min-height: 120px;" placeholder="e.g. We need an AI that reads incoming customer emails, checks our Notion documentation for the answer, and drafts a response." required></textarea>
-                </div>
-                <div class="form-group" style="margin-top: 1.5rem;">
-                  <label for="data_scale" class="form-label">Roughly how much data are we dealing with, and where does it currently live?</label>
-                  <textarea id="data_scale" name="data_scale" class="form-input" style="min-height: 80px;" placeholder="e.g., 3,000 PDF notes and 50 audio files on Google Drive, or 50GB of raw SQL logs."></textarea>
-                </div>
-                
-                <div class="form-group" style="margin-top: 1.5rem;">
-                  <label for="project_scale" class="form-label">Estimated Project Size / Scale</label>
-                  <select id="project_scale" name="project_scale" class="form-input" style="padding-right: 2rem; appearance: auto;" required>
-                    <option value="" disabled selected>Select an option...</option>
-                    <option value="micro">Micro (Quick script, small automation, simple advice)</option>
-                    <option value="standard">Standard (Custom model, internal tool, standard app)</option>
-                    <option value="enterprise">Enterprise (Massive scale, high security, complex multi-agent system)</option>
-                    <option value="unsure">Unsure (I need your team to size it)</option>
-                  </select>
-                </div>
+						<form
+							id="quote-form"
+							action="#"
+							method="POST"
+							enctype="multipart/form-data"
+						>
+							<!-- Wizard Progress Indicator -->
+							<div class="wizard-progress" id="wizard-progress">
+								<div class="wizard-progress__dot active"></div>
+								<div class="wizard-progress__dot"></div>
+								<div class="wizard-progress__dot"></div>
+								<div class="wizard-progress__dot"></div>
+							</div>
 
-                <div class="form-group" style="margin-top: 2rem;">
-                  <label class="form-label" style="font-size: 1.05rem; margin-bottom: 0.5rem;">Which technologies do you think you need? (Select all that apply)</label>
-                  <div class="form-checkbox-group" style="gap: 1rem;">
-                    <label class="form-check" style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
-                      <input type="checkbox" name="tech_needs" value="custom_model">
-                      <div style="display: flex; flex-direction: column;">
-                        <span class="form-check__label" style="font-weight: 600; color: #fff;">Custom AI Model</span>
-                        <span style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 4px;">Trained on our proprietary data logic or heavily fine-tuned.</span>
-                      </div>
-                    </label>
-                    <label class="form-check" style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
-                      <input type="checkbox" name="tech_needs" value="agentic_system">
-                      <div style="display: flex; flex-direction: column;">
-                        <span class="form-check__label" style="font-weight: 600; color: #fff;">Agentic System / Automation</span>
-                        <span style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 4px;">Executes multi-step workflows, browses the web, or calls APIs.</span>
-                      </div>
-                    </label>
-                    <label class="form-check" style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
-                      <input type="checkbox" name="tech_needs" value="rag_search">
-                      <div style="display: flex; flex-direction: column;">
-                        <span class="form-check__label" style="font-weight: 600; color: #fff;">Search & RAG</span>
-                        <span style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 4px;">Chatting with private documents, PDFs, or codebases.</span>
-                      </div>
-                    </label>
-                    <label class="form-check" style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
-                      <input type="checkbox" name="tech_needs" value="app_frontend">
-                      <div style="display: flex; flex-direction: column;">
-                        <span class="form-check__label" style="font-weight: 600; color: #fff;">Complete Web/Mobile App</span>
-                        <span style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 4px;">We need a user-facing frontend interface built as well.</span>
-                      </div>
-                    </label>
-                    <label class="form-check" style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
-                      <input type="checkbox" name="tech_needs" value="synthetic_data">
-                      <div style="display: flex; flex-direction: column;">
-                        <span class="form-check__label" style="font-weight: 600; color: #fff;">Dataset Generation (Only)</span>
-                        <span style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 4px;">I just need Projxon to generate training rows for my own team.</span>
-                      </div>
-                    </label>
-                    <label class="form-check" style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
-                      <input type="checkbox" name="tech_needs" value="strategic_consulting">
-                      <div style="display: flex; flex-direction: column;">
-                        <span class="form-check__label" style="font-weight: 600; color: #fff;">Strategic Consulting / Workshop</span>
-                        <span style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 4px;">Advisory on an existing system, team training, or architecture review.</span>
-                      </div>
-                    </label>
-                    <label class="form-check" style="padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
-                      <input type="checkbox" name="tech_needs" value="unsure" onchange="this.checked ? document.querySelectorAll('input[name=tech_needs]:not([value=unsure])').forEach(el => el.checked = false) : null;">
-                      <div style="display: flex; flex-direction: column;">
-                        <span class="form-check__label" style="font-weight: 600; color: #fff;">Unsure</span>
-                        <span style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 4px;">I'm actually not sure, please have the AI figure it out!</span>
-                      </div>
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div class="wizard-nav">
-                <button type="button" class="btn btn--ghost-light" onclick="prevStep(3)">&larr; Back</button>
-                <button type="button" class="btn btn--primary" id="btn-analyze-needs" onclick="classifyNeeds()">Analyze Technicals &rarr;</button>
-              </div>
-            </div>
+							<!-- Step 1: Identity -->
+							<div class="wizard-step active" id="step-1">
+								<div
+									class="form-section"
+									style="border: none; padding: 0; margin-bottom: 0"
+								>
+									<h3 class="form-section__title" style="font-size: 1.5rem">
+										Let's get introduced.
+									</h3>
+									<div class="form-group">
+										<label for="name" class="form-label">Full Name</label>
+										<input
+											type="text"
+											id="name"
+											name="name"
+											class="form-input"
+											placeholder="John Doe"
+											required
+										/>
+									</div>
+									<div class="form-group">
+										<label for="email" class="form-label">Email Address</label>
+										<input
+											type="email"
+											id="email"
+											name="email"
+											class="form-input"
+											placeholder="john@example.com"
+											required
+										/>
+									</div>
+									<div class="form-group" style="margin-top: 1rem">
+										<label for="entity_type" class="form-label"
+											>Who is this for?</label
+										>
+										<select
+											id="entity_type"
+											name="entity_type"
+											class="form-input"
+											style="padding-right: 2rem; appearance: auto"
+											required
+										>
+											<option value="" disabled selected>
+												Select an option...
+											</option>
+											<option value="personal">Personal / Individual</option>
+											<option value="startup">Startup / Small Business</option>
+											<option value="enterprise">Enterprise</option>
+											<option value="nonprofit">Non-Profit / NGO</option>
+											<option value="education">Education / Research</option>
+										</select>
+									</div>
+								</div>
+								<div class="wizard-nav" style="justify-content: flex-end">
+									<button
+										type="button"
+										class="btn btn--primary"
+										onclick="nextStep(1)"
+									>
+										Next Step &rarr;
+									</button>
+								</div>
+							</div>
 
-            <!-- Loader for Step 4 (replaces the form temporarily) -->
-            <div class="wizard-step" id="step-4-loader">
-              <div class="form-section" style="border: none; text-align: center; padding: 4rem 0;">
-                <h3 class="gradient-text" style="font-size: 2rem; margin-bottom: 1rem;">Analyzing Requirements...</h3>
-                <p style="color: rgba(255,255,255,0.7); font-size: 1.1rem;">Our AI Architect is evaluating your description to determine the specific infrastructure you need.</p>
-                <div style="margin: 2rem auto; max-width: 400px; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; position: relative;">
-                  <div style="position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: #4ade80; animation: slideProgress 2s infinite ease-in-out; border-radius: 4px;"></div>
-                </div>
-                <style>
-                  @keyframes slideProgress {
-                    0% { left: -50%; }
-                    100% { left: 100%; }
-                  }
-                </style>
-              </div>
-            </div>
+							<!-- Step 2: Organization Info -->
+							<div class="wizard-step" id="step-2">
+								<div
+									class="form-section"
+									style="border: none; padding: 0; margin-bottom: 0"
+								>
+									<h3 class="form-section__title" style="font-size: 1.5rem">
+										Tell us about your organization.
+									</h3>
+									<div class="form-group">
+										<label for="company" class="form-label"
+											>Organization Name</label
+										>
+										<input
+											type="text"
+											id="company"
+											name="company"
+											class="form-input"
+											placeholder="Acme Corp"
+										/>
+									</div>
+									<div class="form-group">
+										<label for="website" class="form-label"
+											>Website (Optional)</label
+										>
+										<input
+											type="url"
+											id="website"
+											name="website"
+											class="form-input"
+											placeholder="https://example.com"
+										/>
+									</div>
+									<div class="form-group">
+										<label for="entity_size" class="form-label"
+											>Estimated Number of Employees/Users</label
+										>
+										<input
+											type="text"
+											id="entity_size"
+											name="entity_size"
+											class="form-input"
+											placeholder="e.g. 10-50"
+										/>
+									</div>
+									<div class="form-group">
+										<label for="industry" class="form-label"
+											>Industry Sector</label
+										>
+										<input
+											type="text"
+											id="industry"
+											name="industry"
+											class="form-input"
+											placeholder="e.g. Healthcare, Finance, E-commerce"
+										/>
+									</div>
+								</div>
+								<div class="wizard-nav">
+									<button
+										type="button"
+										class="btn btn--ghost-light"
+										onclick="prevStep(2)"
+									>
+										&larr; Back
+									</button>
+									<button
+										type="button"
+										class="btn btn--primary"
+										onclick="nextStep(2)"
+									>
+										Scope Requirements &rarr;
+									</button>
+								</div>
+							</div>
 
-            <!-- Step 4: Technical Needs (Dynamically populated) -->
-            <div class="wizard-step" id="step-4">
-              <div class="form-section">
-                <h3 class="form-section__title" style="font-size: 1.5rem;">Technical Implementation</h3>
-                <p style="color: rgba(255,255,255,0.6); margin-top: 0; margin-bottom: 2rem;">Based on your requirements, we've focused on the technical variables that matter most for this build.</p>
-                
-                <div id="dynamic_technical_content">
-                  <!-- AI routes questions here via JS -->
-                </div>
-              </div>
-              <div class="wizard-nav">
-                <button type="button" class="btn btn--ghost-light" onclick="prevStep(4)">&larr; Back</button>
-                <button type="button" class="btn btn--primary" onclick="nextStep(4)">Additional Details &rarr;</button>
-              </div>
-            </div>
+							<!-- Step 3: The Problem -->
+							<div class="wizard-step" id="step-3">
+								<div
+									class="form-section"
+									style="border: none; padding: 0; margin-bottom: 0"
+								>
+									<h3 class="form-section__title" style="font-size: 1.5rem">
+										What are we building?
+									</h3>
+									<div class="form-group">
+										<label for="purpose" class="form-label"
+											>In plain english, what should this AI system do?</label
+										>
+										<textarea
+											id="purpose"
+											name="purpose"
+											class="form-input"
+											style="min-height: 120px"
+											placeholder="e.g. We need an AI that reads incoming customer emails, checks our Notion documentation for the answer, and drafts a response."
+											required
+										></textarea>
+									</div>
+									<div class="form-group" style="margin-top: 1.5rem">
+										<label for="data_scale" class="form-label"
+											>Roughly how much data are we dealing with, and where does
+											it currently live?</label
+										>
+										<textarea
+											id="data_scale"
+											name="data_scale"
+											class="form-input"
+											style="min-height: 80px"
+											placeholder="e.g., 3,000 PDF notes and 50 audio files on Google Drive, or 50GB of raw SQL logs."
+										></textarea>
+									</div>
 
-            <!-- Step 5: Additional Details -->
-            <div class="wizard-step" id="step-5">
-              <div class="form-section" style="border: none; padding: 0; margin-bottom: 0;">
-                <h3 class="form-section__title" style="font-size: 1.5rem;">Final Notes</h3>
-                <div class="form-group">
-                  <label for="latency" class="form-label">What are your latency (speed) requirements?</label>
-                  <select id="latency" name="latency" class="form-input" style="padding-right: 2rem; appearance: auto;" required>
-                    <option value="" disabled selected>Select an option...</option>
-                    <option value="standard">Standard Chat (Typing speed is fine, 1-3 seconds)</option>
-                    <option value="realtime">Real-time / Sub-second (Critical for voice/high-freq)</option>
-                    <option value="batch">Batch Processing (It can process overnight or async)</option>
-                  </select>
-                </div>
-                <div class="form-group" style="margin-top: 1rem;">
-                  <label for="support_tier" class="form-label">After launch, what level of ongoing support do you anticipate?</label>
-                  <select id="support_tier" name="support_tier" class="form-input" style="padding-right: 2rem; appearance: auto;" required>
-                    <option value="" disabled selected>Select an option...</option>
-                    <option value="self_managed">Self-managed: Hand us the keys, our team will maintain it</option>
-                    <option value="standard">Standard Maintenance: Keep the servers running and models updated</option>
-                    <option value="white_glove">White-glove: Active continuous training and dedicated support</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="compliance_security" class="form-label">Are there any regulatory or security constraints?</label>
-                  <input type="text" id="compliance_security" name="compliance_security" class="form-input" placeholder="e.g. HIPAA, SOC2, GDPR, Air-gapped environment">
-                </div>
-                <div class="form-group">
-                  <label for="timeline_budget" class="form-label">Target Launch Timeline & Budget</label>
-                  <input type="text" id="timeline_budget" name="timeline_budget" class="form-input" placeholder="e.g. Launch in 3 months, Budget around $15k-$30k">
-                </div>
-                <div class="form-group">
-                  <label for="additional_info" class="form-label">Any additional information or context?</label>
-                  <textarea id="additional_info" name="additional_info" class="form-input" placeholder="Hardware constraints, target demographics..."></textarea>
-                </div>
-              </div>
-              
-              <div class="wizard-nav">
-                <button type="button" class="btn btn--ghost-light" onclick="prevStep(5)">&larr; Back</button>
-                <div style="flex: 1; text-align: right;">
-                  <button type="submit" class="btn btn--primary" style="padding: 1rem 2rem; font-size: 1.125rem;">Finalize Request</button>
-                  <p style="text-align: right; color: rgba(255,255,255,0.4); font-size: 0.875rem; margin-top: 0.5rem;">We will verify edge cases on the next page.</p>
-                </div>
-              </div>
-            </div>
-            <!-- Step 6: AI Clarification & Quote Gen -->
-            <div class="wizard-step" id="step-6">
-              <div class="form-section" style="border: none; text-align: center; padding: 4rem 0;" id="ai-progress-container">
-                <h3 class="gradient-text" style="font-size: 2rem; margin-bottom: 1rem;" id="ai-progress-title">Reviewing Architecture...</h3>
-                <p id="ai-status-text" style="color: rgba(255,255,255,0.7); font-size: 1.1rem;">Our AI Architect is running a final review of your requirements.</p>
-                <div id="loading-bar-wrapper" style="margin: 2rem auto; max-width: 400px; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; position: relative;">
-                  <div id="ai-progress-bar" style="position: absolute; top: 0; left: 0; height: 100%; width: 5%; background: #4ade80; transition: width 0.5s ease; border-radius: 4px;"></div>
-                </div>
-              </div>
+									<div class="form-group" style="margin-top: 1.5rem">
+										<label for="project_scale" class="form-label"
+											>Estimated Project Size / Scale</label
+										>
+										<select
+											id="project_scale"
+											name="project_scale"
+											class="form-input"
+											style="padding-right: 2rem; appearance: auto"
+											required
+										>
+											<option value="" disabled selected>
+												Select an option...
+											</option>
+											<option value="micro">
+												Micro (Quick script, small automation, simple advice)
+											</option>
+											<option value="standard">
+												Standard (Custom model, internal tool, standard app)
+											</option>
+											<option value="enterprise">
+												Enterprise (Massive scale, high security, complex
+												multi-agent system)
+											</option>
+											<option value="unsure">
+												Unsure (I need your team to size it)
+											</option>
+										</select>
+									</div>
 
-              <!-- Hidden initially, revealed if Clarify API requires inputs -->
-              <div id="ai-qa-container" style="display: none; text-align: left;">
-                  <div id="qa-questions-wrapper"></div>
-                  <div class="wizard-nav" style="justify-content: flex-end; margin-top: 2rem;">
-                      <button type="button" class="btn btn--primary" onclick="submitFinalAnswersAndQuote()">Generate Estimate &rarr;</button>
-                  </div>
-              </div>
-            </div>
+									<div class="form-group" style="margin-top: 2rem">
+										<label
+											class="form-label"
+											style="font-size: 1.05rem; margin-bottom: 0.5rem"
+											>Which technologies do you think you need? (Select all
+											that apply)</label
+										>
+										<div class="form-checkbox-group" style="gap: 1rem">
+											<label
+												class="form-check"
+												style="
+													padding: 1rem;
+													background: rgba(255, 255, 255, 0.03);
+													border: 1px solid rgba(255, 255, 255, 0.1);
+													border-radius: 8px;
+												"
+											>
+												<input
+													type="checkbox"
+													name="tech_needs"
+													value="custom_model"
+												/>
+												<div style="display: flex; flex-direction: column">
+													<span
+														class="form-check__label"
+														style="font-weight: 600; color: #fff"
+														>Custom AI Model</span
+													>
+													<span
+														style="
+															font-size: 0.85rem;
+															color: rgba(255, 255, 255, 0.5);
+															margin-top: 4px;
+														"
+														>Trained on our proprietary data logic or heavily
+														fine-tuned.</span
+													>
+												</div>
+											</label>
+											<label
+												class="form-check"
+												style="
+													padding: 1rem;
+													background: rgba(255, 255, 255, 0.03);
+													border: 1px solid rgba(255, 255, 255, 0.1);
+													border-radius: 8px;
+												"
+											>
+												<input
+													type="checkbox"
+													name="tech_needs"
+													value="agentic_system"
+												/>
+												<div style="display: flex; flex-direction: column">
+													<span
+														class="form-check__label"
+														style="font-weight: 600; color: #fff"
+														>Agentic System / Automation</span
+													>
+													<span
+														style="
+															font-size: 0.85rem;
+															color: rgba(255, 255, 255, 0.5);
+															margin-top: 4px;
+														"
+														>Executes multi-step workflows, browses the web, or
+														calls APIs.</span
+													>
+												</div>
+											</label>
+											<label
+												class="form-check"
+												style="
+													padding: 1rem;
+													background: rgba(255, 255, 255, 0.03);
+													border: 1px solid rgba(255, 255, 255, 0.1);
+													border-radius: 8px;
+												"
+											>
+												<input
+													type="checkbox"
+													name="tech_needs"
+													value="rag_search"
+												/>
+												<div style="display: flex; flex-direction: column">
+													<span
+														class="form-check__label"
+														style="font-weight: 600; color: #fff"
+														>Search & RAG</span
+													>
+													<span
+														style="
+															font-size: 0.85rem;
+															color: rgba(255, 255, 255, 0.5);
+															margin-top: 4px;
+														"
+														>Chatting with private documents, PDFs, or
+														codebases.</span
+													>
+												</div>
+											</label>
+											<label
+												class="form-check"
+												style="
+													padding: 1rem;
+													background: rgba(255, 255, 255, 0.03);
+													border: 1px solid rgba(255, 255, 255, 0.1);
+													border-radius: 8px;
+												"
+											>
+												<input
+													type="checkbox"
+													name="tech_needs"
+													value="app_frontend"
+												/>
+												<div style="display: flex; flex-direction: column">
+													<span
+														class="form-check__label"
+														style="font-weight: 600; color: #fff"
+														>Complete Web/Mobile App</span
+													>
+													<span
+														style="
+															font-size: 0.85rem;
+															color: rgba(255, 255, 255, 0.5);
+															margin-top: 4px;
+														"
+														>We need a user-facing frontend interface built as
+														well.</span
+													>
+												</div>
+											</label>
+											<label
+												class="form-check"
+												style="
+													padding: 1rem;
+													background: rgba(255, 255, 255, 0.03);
+													border: 1px solid rgba(255, 255, 255, 0.1);
+													border-radius: 8px;
+												"
+											>
+												<input
+													type="checkbox"
+													name="tech_needs"
+													value="synthetic_data"
+												/>
+												<div style="display: flex; flex-direction: column">
+													<span
+														class="form-check__label"
+														style="font-weight: 600; color: #fff"
+														>Dataset Generation (Only)</span
+													>
+													<span
+														style="
+															font-size: 0.85rem;
+															color: rgba(255, 255, 255, 0.5);
+															margin-top: 4px;
+														"
+														>I just need Projxon to generate training rows for
+														my own team.</span
+													>
+												</div>
+											</label>
+											<label
+												class="form-check"
+												style="
+													padding: 1rem;
+													background: rgba(255, 255, 255, 0.03);
+													border: 1px solid rgba(255, 255, 255, 0.1);
+													border-radius: 8px;
+												"
+											>
+												<input
+													type="checkbox"
+													name="tech_needs"
+													value="strategic_consulting"
+												/>
+												<div style="display: flex; flex-direction: column">
+													<span
+														class="form-check__label"
+														style="font-weight: 600; color: #fff"
+														>Strategic Consulting / Workshop</span
+													>
+													<span
+														style="
+															font-size: 0.85rem;
+															color: rgba(255, 255, 255, 0.5);
+															margin-top: 4px;
+														"
+														>Advisory on an existing system, team training, or
+														architecture review.</span
+													>
+												</div>
+											</label>
+											<label
+												class="form-check"
+												style="
+													padding: 1rem;
+													background: rgba(255, 255, 255, 0.03);
+													border: 1px solid rgba(255, 255, 255, 0.1);
+													border-radius: 8px;
+												"
+											>
+												<input
+													type="checkbox"
+													name="tech_needs"
+													value="unsure"
+													onchange="
+														this.checked
+															? document
+																	.querySelectorAll(
+																		'input[name=tech_needs]:not([value=unsure])',
+																	)
+																	.forEach((el) => (el.checked = false))
+															: null
+													"
+												/>
+												<div style="display: flex; flex-direction: column">
+													<span
+														class="form-check__label"
+														style="font-weight: 600; color: #fff"
+														>Unsure</span
+													>
+													<span
+														style="
+															font-size: 0.85rem;
+															color: rgba(255, 255, 255, 0.5);
+															margin-top: 4px;
+														"
+														>I'm actually not sure, please have the AI figure it
+														out!</span
+													>
+												</div>
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="wizard-nav">
+									<button
+										type="button"
+										class="btn btn--ghost-light"
+										onclick="prevStep(3)"
+									>
+										&larr; Back
+									</button>
+									<button
+										type="button"
+										class="btn btn--primary"
+										id="btn-analyze-needs"
+										onclick="classifyNeeds()"
+									>
+										Analyze Technicals &rarr;
+									</button>
+								</div>
+							</div>
 
-          </form>
+							<!-- Loader for Step 4 (replaces the form temporarily) -->
+							<div class="wizard-step" id="step-4-loader">
+								<div
+									class="form-section"
+									style="border: none; text-align: center; padding: 4rem 0"
+								>
+									<h3
+										class="gradient-text"
+										style="font-size: 2rem; margin-bottom: 1rem"
+									>
+										Analyzing Requirements...
+									</h3>
+									<p style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem">
+										Our AI Architect is evaluating your description to determine
+										the specific infrastructure you need.
+									</p>
+									<div
+										style="
+											margin: 2rem auto;
+											max-width: 400px;
+											height: 8px;
+											background: rgba(255, 255, 255, 0.05);
+											border-radius: 4px;
+											overflow: hidden;
+											position: relative;
+										"
+									>
+										<div
+											style="
+												position: absolute;
+												top: 0;
+												left: 0;
+												height: 100%;
+												width: 50%;
+												background: #4ade80;
+												animation: slideProgress 2s infinite ease-in-out;
+												border-radius: 4px;
+											"
+										></div>
+									</div>
+									<style>
+										@keyframes slideProgress {
+											0% {
+												left: -50%;
+											}
+											100% {
+												left: 100%;
+											}
+										}
+									</style>
+								</div>
+							</div>
 
-          <!-- Quote Results (Hidden Initially) -->
-          <div id="quote-results" style="display: none; margin-top: 2rem;">
-             <h2 class="gradient-text" style="font-size: 2.5rem; margin-bottom: 1rem; text-align: center;">Your Estimate</h2>
-             <p style="text-align: center; color: rgba(255,255,255,0.7); margin-bottom: 2rem;">Based on your inputs and our AI's analysis, here is the projected scope and cost for your build. A Projxon engineer will review this and reach out shortly.</p>
-             <div id="quote-content" style="color: rgba(255,255,255,0.8); line-height: 1.7; margin-bottom: 2rem;"></div>
-             <a href="https://calendly.com/hudson-gouge/30min" class="btn btn--primary" style="width: 100%; justify-content: center;">Schedule Consultation</a>
-             <button onclick="window.location.reload();" class="btn btn--ghost" style="width: 100%; justify-content: center; margin-top: 1rem;">Start Over</button>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
+							<!-- Step 4: Technical Needs (Dynamically populated) -->
+							<div class="wizard-step" id="step-4">
+								<div class="form-section">
+									<h3 class="form-section__title" style="font-size: 1.5rem">
+										Technical Implementation
+									</h3>
+									<p
+										style="
+											color: rgba(255, 255, 255, 0.6);
+											margin-top: 0;
+											margin-bottom: 2rem;
+										"
+									>
+										Based on your requirements, we've focused on the technical
+										variables that matter most for this build.
+									</p>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer__container">
-      <div class="footer__grid">
-        <div>
-          <div class="footer__logo">
-            <img src="/static/asset/image/logo/wordmark_light.svg" alt="Projxon AI wordmark">
-          </div>
-          <p class="footer__description">
-            Building local-first AI solutions and state-of-the-art multi-agent custom architectures. Private, secure, and running on your devices.
-          </p>
-        </div>
-        
-        <div class="footer__column">
-          <h4 class="footer__column-title">Company</h4>
-          <ul class="footer__links">
-            <li><a href="/" class="footer__link">Home</a></li>
-            <li><a href="/about.html" class="footer__link">About</a></li>
-            <li><a href="/team.html" class="footer__link">Team</a></li>
-            <li><a href="/quote.html" class="footer__link">Get a Quote</a></li>
-          </ul>
-        </div>
-        
-        <div class="footer__column">
-          <h4 class="footer__column-title">Stay in touch</h4>
-          <ul class="footer__links">
-            <li><a href="mailto:support@projxon.ai" class="footer__link">support@projxon.ai</a></li>
-            <li><a href="/quote.html" class="footer__link">Schedule Call</a></li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="footer__bottom">
-        <p>&copy; 2026 Projxon AI. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
+									<div id="dynamic_technical_content">
+										<!-- AI routes questions here via JS -->
+									</div>
+								</div>
+								<div class="wizard-nav">
+									<button
+										type="button"
+										class="btn btn--ghost-light"
+										onclick="prevStep(4)"
+									>
+										&larr; Back
+									</button>
+									<button
+										type="button"
+										class="btn btn--primary"
+										onclick="nextStep(4)"
+									>
+										Additional Details &rarr;
+									</button>
+								</div>
+							</div>
 
-    <script src="/js/main.js"></script>
-    <script>
-      let heartbeatInterval;
-      let currentStateIndex = 0;
-      let baseFormDataObj = {};
-      
-      const states = [
-        { progress: '10%', text: "Parsing internal project scope..." },
-        { progress: '20%', text: "Evaluating model feasibility and base model scale..." },
-        { progress: '30%', text: "Scanning domain constraints..." },
-        { progress: '40%', text: "Analyzing dataset parameters..." },
-      ];
-      
-      const quoteStates = [
-        { progress: '50%', text: "Running GPT-5 architectural web research..." },
-        { progress: '65%', text: "Synthesizing HuggingFace dataset queries..." },
-        { progress: '75%', text: "Assembling AI infrastructure pipelines..." },
-        { progress: '85%', text: "Calculating deployment costs and RLVR training hours..." },
-        { progress: '95%', text: "Finalizing Projxon estimate sheet..." }
-      ];
+							<!-- Step 5: Additional Details -->
+							<div class="wizard-step" id="step-5">
+								<div
+									class="form-section"
+									style="border: none; padding: 0; margin-bottom: 0"
+								>
+									<h3 class="form-section__title" style="font-size: 1.5rem">
+										Final Notes
+									</h3>
+									<div class="form-group">
+										<label for="latency" class="form-label"
+											>What are your latency (speed) requirements?</label
+										>
+										<select
+											id="latency"
+											name="latency"
+											class="form-input"
+											style="padding-right: 2rem; appearance: auto"
+											required
+										>
+											<option value="" disabled selected>
+												Select an option...
+											</option>
+											<option value="standard">
+												Standard Chat (Typing speed is fine, 1-3 seconds)
+											</option>
+											<option value="realtime">
+												Real-time / Sub-second (Critical for voice/high-freq)
+											</option>
+											<option value="batch">
+												Batch Processing (It can process overnight or async)
+											</option>
+										</select>
+									</div>
+									<div class="form-group" style="margin-top: 1rem">
+										<label for="support_tier" class="form-label"
+											>After launch, what level of ongoing support do you
+											anticipate?</label
+										>
+										<select
+											id="support_tier"
+											name="support_tier"
+											class="form-input"
+											style="padding-right: 2rem; appearance: auto"
+											required
+										>
+											<option value="" disabled selected>
+												Select an option...
+											</option>
+											<option value="self_managed">
+												Self-managed: Hand us the keys, our team will maintain
+												it
+											</option>
+											<option value="standard">
+												Standard Maintenance: Keep the servers running and
+												models updated
+											</option>
+											<option value="white_glove">
+												White-glove: Active continuous training and dedicated
+												support
+											</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="compliance_security" class="form-label"
+											>Are there any regulatory or security constraints?</label
+										>
+										<input
+											type="text"
+											id="compliance_security"
+											name="compliance_security"
+											class="form-input"
+											placeholder="e.g. HIPAA, SOC2, GDPR, Air-gapped environment"
+										/>
+									</div>
+									<div class="form-group">
+										<label for="timeline_budget" class="form-label"
+											>Target Launch Timeline & Budget</label
+										>
+										<input
+											type="text"
+											id="timeline_budget"
+											name="timeline_budget"
+											class="form-input"
+											placeholder="e.g. Launch in 3 months, Budget around $15k-$30k"
+										/>
+									</div>
+									<div class="form-group">
+										<label for="additional_info" class="form-label"
+											>Any additional information or context?</label
+										>
+										<textarea
+											id="additional_info"
+											name="additional_info"
+											class="form-input"
+											placeholder="Hardware constraints, target demographics..."
+										></textarea>
+									</div>
+								</div>
 
-      function validateStep(stepIndex) {
-        const stepDiv = document.getElementById('step-' + stepIndex);
-        if (!stepDiv) return true;
-        let isValid = true;
-        const inputs = stepDiv.querySelectorAll('input:required, select:required, textarea:required');
-        
-        inputs.forEach(input => {
-          if (!input.disabled && !input.value.trim() && input.type !== 'radio' && input.type !== 'checkbox') {
-            isValid = false;
-            input.reportValidity();
-          }
-          if (input.type === 'radio') {
-             const groupName = input.name;
-             const checked = stepDiv.querySelector(`input[name="${groupName}"]:checked`);
-             if (!checked) {
-                isValid = false;
-                input.reportValidity();
-             }
-          }
-        });
-        return isValid;
-      }
-      
-      window.nextStep = function(currentStep) {
-        if (!validateStep(currentStep)) return;
-        
-        const currentDiv = document.getElementById('step-' + currentStep);
-        let nextStepNum = currentStep + 1;
-        
-        if (currentStep === 1) {
-          const entityType = document.getElementById('entity_type').value;
-          if (entityType === 'personal') {
-            nextStepNum = 3;
-          }
-        }
-        
-        const nextDiv = document.getElementById('step-' + nextStepNum);
-        
-        if (currentDiv && nextDiv) {
-          currentDiv.classList.remove('active');
-          nextDiv.classList.add('active');
-          updateProgressLines(nextStepNum);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      };
+								<div class="wizard-nav">
+									<button
+										type="button"
+										class="btn btn--ghost-light"
+										onclick="prevStep(5)"
+									>
+										&larr; Back
+									</button>
+									<div style="flex: 1; text-align: right">
+										<button
+											type="submit"
+											class="btn btn--primary"
+											style="padding: 1rem 2rem; font-size: 1.125rem"
+										>
+											Finalize Request
+										</button>
+										<p
+											style="
+												text-align: right;
+												color: rgba(255, 255, 255, 0.4);
+												font-size: 0.875rem;
+												margin-top: 0.5rem;
+											"
+										>
+											We will verify edge cases on the next page.
+										</p>
+									</div>
+								</div>
+							</div>
+							<!-- Step 6: AI Clarification & Quote Gen -->
+							<div class="wizard-step" id="step-6">
+								<div
+									class="form-section"
+									style="border: none; text-align: center; padding: 4rem 0"
+									id="ai-progress-container"
+								>
+									<h3
+										class="gradient-text"
+										style="font-size: 2rem; margin-bottom: 1rem"
+										id="ai-progress-title"
+									>
+										Reviewing Architecture...
+									</h3>
+									<p
+										id="ai-status-text"
+										style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem"
+									>
+										Our AI Architect is running a final review of your
+										requirements.
+									</p>
+									<div
+										id="loading-bar-wrapper"
+										style="
+											margin: 2rem auto;
+											max-width: 400px;
+											height: 8px;
+											background: rgba(255, 255, 255, 0.05);
+											border-radius: 4px;
+											overflow: hidden;
+											position: relative;
+										"
+									>
+										<div
+											id="ai-progress-bar"
+											style="
+												position: absolute;
+												top: 0;
+												left: 0;
+												height: 100%;
+												width: 5%;
+												background: #4ade80;
+												transition: width 0.5s ease;
+												border-radius: 4px;
+											"
+										></div>
+									</div>
+								</div>
 
-      window.prevStep = function(currentStep) {
-        const currentDiv = document.getElementById('step-' + currentStep);
-        let prevStepNum = currentStep - 1;
-        
-        if (currentStep === 3) {
-          const entityType = document.getElementById('entity_type').value;
-          if (entityType === 'personal') {
-            prevStepNum = 1;
-          }
-        }
-        
-        const prevDiv = document.getElementById('step-' + prevStepNum);
-        
-        if (currentDiv && prevDiv) {
-          currentDiv.classList.remove('active');
-          prevDiv.classList.add('active');
-          updateProgressLines(prevStepNum);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      };
-      
-      function updateProgressLines(activeStep) {
-        const dots = document.querySelectorAll('.wizard-progress__dot');
-        let dotIndex = 0;
-        if (activeStep === 1) dotIndex = 0;
-        else if (activeStep === 2 || activeStep === 3) dotIndex = 1;
-        else if (activeStep === 4) dotIndex = 2; 
-        else if (activeStep === 5 || activeStep === 6) dotIndex = 3;
-        
-        dots.forEach((dot, index) => {
-          dot.classList.remove('active', 'completed');
-          if (index < dotIndex) dot.classList.add('completed');
-          else if (index === dotIndex) dot.classList.add('active');
-        });
-      }
+								<!-- Hidden initially, revealed if Clarify API requires inputs -->
+								<div
+									id="ai-qa-container"
+									style="display: none; text-align: left"
+								>
+									<div id="qa-questions-wrapper"></div>
+									<div
+										class="wizard-nav"
+										style="justify-content: flex-end; margin-top: 2rem"
+									>
+										<button
+											type="button"
+											class="btn btn--primary"
+											onclick="submitFinalAnswersAndQuote()"
+										>
+											Generate Estimate &rarr;
+										</button>
+									</div>
+								</div>
+							</div>
+						</form>
 
-      window.classifyNeeds = async function() {
-        if (!validateStep(3)) return;
-        
-        document.getElementById('step-3').classList.remove('active');
-        document.getElementById('step-4-loader').classList.add('active');
-        updateProgressLines(4);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        
-        const purpose = document.getElementById('purpose').value;
-        const dataScale = document.getElementById('data_scale').value;
-        const projectScale = document.getElementById('project_scale').value;
-        const techCheckboxes = document.querySelectorAll('input[name="tech_needs"]:checked');
-        const techNeeds = Array.from(techCheckboxes).map(cb => cb.value);
-        
-        try {
-          const res = await fetch('/api/classify-needs', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ purpose, dataScale, projectScale, techNeeds })
-          });
-          
-          let routingData = { needs_custom_model: true, needs_rag: true, needs_app: true };
-          if (res.ok) {
-             routingData = await res.json();
-          }
-          
-          buildTechnicalUI(routingData);
-          document.getElementById('step-4-loader').classList.remove('active');
-          document.getElementById('step-4').classList.add('active');
-          
-        } catch (err) {
-          console.error(err);
-          buildTechnicalUI({ needs_custom_model: true, needs_rag: true, needs_app: true });
-          document.getElementById('step-4-loader').classList.remove('active');
-          document.getElementById('step-4').classList.add('active');
-        }
-      }
-      
-      function buildTechnicalUI(routing) {
-          const container = document.getElementById('dynamic_technical_content');
-          let html = '';
-          
-          if (routing.needs_custom_model) {
-              html += `
+						<!-- Quote Results (Hidden Initially) -->
+						<div id="quote-results" style="display: none; margin-top: 2rem">
+							<h2
+								class="gradient-text"
+								style="
+									font-size: 2.5rem;
+									margin-bottom: 1rem;
+									text-align: center;
+								"
+							>
+								Your Estimate
+							</h2>
+							<p
+								style="
+									text-align: center;
+									color: rgba(255, 255, 255, 0.7);
+									margin-bottom: 2rem;
+								"
+							>
+								Based on your inputs and our AI's analysis, here is the
+								projected scope and cost for your build. A Projxon engineer will
+								review this and reach out shortly.
+							</p>
+							<div
+								id="quote-content"
+								style="
+									color: rgba(255, 255, 255, 0.8);
+									line-height: 1.7;
+									margin-bottom: 2rem;
+								"
+							></div>
+							<a
+								href="https://calendly.com/hudson-gouge/30min"
+								class="btn btn--primary"
+								style="width: 100%; justify-content: center"
+								>Schedule Consultation</a
+							>
+							<button
+								onclick="window.location.reload()"
+								class="btn btn--ghost"
+								style="width: 100%; justify-content: center; margin-top: 1rem"
+							>
+								Start Over
+							</button>
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+
+		<!-- Footer -->
+		<footer class="footer">
+			<div class="footer__container">
+				<div class="footer__grid">
+					<div>
+						<div class="footer__logo">
+							<img
+								src="/static/asset/image/logo/wordmark_light.svg"
+								alt="Projxon AI wordmark"
+							/>
+						</div>
+						<p class="footer__description">
+							Building local-first AI solutions and state-of-the-art multi-agent
+							custom architectures. Private, secure, and running on your
+							devices.
+						</p>
+					</div>
+
+					<div class="footer__column">
+						<h4 class="footer__column-title">Company</h4>
+						<ul class="footer__links">
+							<li><a href="/" class="footer__link">Home</a></li>
+							<li><a href="/about.html" class="footer__link">About</a></li>
+							<li><a href="/team.html" class="footer__link">Team</a></li>
+							<li>
+								<a href="/quote.html" class="footer__link">Get a Quote</a>
+							</li>
+						</ul>
+					</div>
+
+					<div class="footer__column">
+						<h4 class="footer__column-title">Stay in touch</h4>
+						<ul class="footer__links">
+							<li>
+								<a href="mailto:support@projxon.ai" class="footer__link"
+									>support@projxon.ai</a
+								>
+							</li>
+							<li>
+								<a href="/quote.html" class="footer__link">Schedule Call</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="footer__bottom">
+					<p>&copy; 2026 Projxon AI. All rights reserved.</p>
+				</div>
+			</div>
+		</footer>
+
+		<script src="/js/main.js"></script>
+		<script>
+			let heartbeatInterval;
+			let currentStateIndex = 0;
+			let baseFormDataObj = {};
+
+			const states = [
+				{ progress: "10%", text: "Parsing internal project scope..." },
+				{
+					progress: "20%",
+					text: "Evaluating model feasibility and base model scale...",
+				},
+				{ progress: "30%", text: "Scanning domain constraints..." },
+				{ progress: "40%", text: "Analyzing dataset parameters..." },
+			];
+
+			const quoteStates = [
+				{
+					progress: "50%",
+					text: "Running GPT-5 architectural web research...",
+				},
+				{
+					progress: "65%",
+					text: "Synthesizing HuggingFace dataset queries...",
+				},
+				{ progress: "75%", text: "Assembling AI infrastructure pipelines..." },
+				{
+					progress: "85%",
+					text: "Calculating deployment costs and RLVR training hours...",
+				},
+				{ progress: "95%", text: "Finalizing Projxon estimate sheet..." },
+			];
+
+			function validateStep(stepIndex) {
+				const stepDiv = document.getElementById("step-" + stepIndex);
+				if (!stepDiv) return true;
+				let isValid = true;
+				const inputs = stepDiv.querySelectorAll(
+					"input:required, select:required, textarea:required",
+				);
+
+				inputs.forEach((input) => {
+					if (
+						!input.disabled &&
+						!input.value.trim() &&
+						input.type !== "radio" &&
+						input.type !== "checkbox"
+					) {
+						isValid = false;
+						input.reportValidity();
+					}
+					if (input.type === "radio") {
+						const groupName = input.name;
+						const checked = stepDiv.querySelector(
+							`input[name="${groupName}"]:checked`,
+						);
+						if (!checked) {
+							isValid = false;
+							input.reportValidity();
+						}
+					}
+				});
+				return isValid;
+			}
+
+			window.nextStep = function (currentStep) {
+				if (!validateStep(currentStep)) return;
+
+				const currentDiv = document.getElementById("step-" + currentStep);
+				let nextStepNum = currentStep + 1;
+
+				if (currentStep === 1) {
+					const entityType = document.getElementById("entity_type").value;
+					if (entityType === "personal") {
+						nextStepNum = 3;
+					}
+				}
+
+				const nextDiv = document.getElementById("step-" + nextStepNum);
+
+				if (currentDiv && nextDiv) {
+					currentDiv.classList.remove("active");
+					nextDiv.classList.add("active");
+					updateProgressLines(nextStepNum);
+					window.scrollTo({ top: 0, behavior: "smooth" });
+				}
+			};
+
+			window.prevStep = function (currentStep) {
+				const currentDiv = document.getElementById("step-" + currentStep);
+				let prevStepNum = currentStep - 1;
+
+				if (currentStep === 3) {
+					const entityType = document.getElementById("entity_type").value;
+					if (entityType === "personal") {
+						prevStepNum = 1;
+					}
+				}
+
+				const prevDiv = document.getElementById("step-" + prevStepNum);
+
+				if (currentDiv && prevDiv) {
+					currentDiv.classList.remove("active");
+					prevDiv.classList.add("active");
+					updateProgressLines(prevStepNum);
+					window.scrollTo({ top: 0, behavior: "smooth" });
+				}
+			};
+
+			function updateProgressLines(activeStep) {
+				const dots = document.querySelectorAll(".wizard-progress__dot");
+				let dotIndex = 0;
+				if (activeStep === 1) dotIndex = 0;
+				else if (activeStep === 2 || activeStep === 3) dotIndex = 1;
+				else if (activeStep === 4) dotIndex = 2;
+				else if (activeStep === 5 || activeStep === 6) dotIndex = 3;
+
+				dots.forEach((dot, index) => {
+					dot.classList.remove("active", "completed");
+					if (index < dotIndex) dot.classList.add("completed");
+					else if (index === dotIndex) dot.classList.add("active");
+				});
+			}
+
+			window.classifyNeeds = async function () {
+				if (!validateStep(3)) return;
+
+				document.getElementById("step-3").classList.remove("active");
+				document.getElementById("step-4-loader").classList.add("active");
+				updateProgressLines(4);
+				window.scrollTo({ top: 0, behavior: "smooth" });
+
+				const purpose = document.getElementById("purpose").value;
+				const dataScale = document.getElementById("data_scale").value;
+				const projectScale = document.getElementById("project_scale").value;
+				const techCheckboxes = document.querySelectorAll(
+					'input[name="tech_needs"]:checked',
+				);
+				const techNeeds = Array.from(techCheckboxes).map((cb) => cb.value);
+
+				try {
+					const res = await fetch("/api/classify-needs", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							purpose,
+							dataScale,
+							projectScale,
+							techNeeds,
+						}),
+					});
+
+					let routingData = {
+						needs_custom_model: true,
+						needs_rag: true,
+						needs_app: true,
+					};
+					if (res.ok) {
+						routingData = await res.json();
+					}
+
+					buildTechnicalUI(routingData);
+					document.getElementById("step-4-loader").classList.remove("active");
+					document.getElementById("step-4").classList.add("active");
+				} catch (err) {
+					console.error(err);
+					buildTechnicalUI({
+						needs_custom_model: true,
+						needs_rag: true,
+						needs_app: true,
+					});
+					document.getElementById("step-4-loader").classList.remove("active");
+					document.getElementById("step-4").classList.add("active");
+				}
+			};
+
+			function buildTechnicalUI(routing) {
+				const container = document.getElementById("dynamic_technical_content");
+				let html = "";
+
+				if (routing.needs_custom_model) {
+					html += `
               <div class="form-section" style="padding: 1.5rem; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; margin-bottom: 2rem;">
                   <h4 style="color: #4ade80; margin-top: 0; margin-bottom: 1rem;">Custom Model & Training</h4>
                   <div class="form-group">
@@ -603,10 +1241,15 @@
                       </div>
                   </div>
               </div>`;
-          }
-          
-          if (routing.needs_rag || routing.needs_search || routing.needs_automation || routing.needs_agentic_system) {
-              html += `
+				}
+
+				if (
+					routing.needs_rag ||
+					routing.needs_search ||
+					routing.needs_automation ||
+					routing.needs_agentic_system
+				) {
+					html += `
               <div class="form-section" style="padding: 1.5rem; background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 8px; margin-bottom: 2rem;">
                   <h4 style="color: #a855f7; margin-top: 0; margin-bottom: 1rem;">Data Search & Integration</h4>
                   <div class="form-group">
@@ -618,10 +1261,10 @@
                       <input type="text" name="automation_tools" class="form-input" placeholder="e.g. Yes, draft emails in Gmail and create Salesforce records">
                   </div>
               </div>`;
-          }
-          
-          if (routing.needs_app || routing.needs_frontend) {
-              html += `
+				}
+
+				if (routing.needs_app || routing.needs_frontend) {
+					html += `
               <div class="form-section" style="padding: 1.5rem; background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 8px; margin-bottom: 2rem;">
                   <h4 style="color: #22c55e; margin-top: 0; margin-bottom: 1rem;">Application Interface</h4>
                   <div class="form-group">
@@ -633,10 +1276,10 @@
                       </div>
                   </div>
               </div>`;
-          }
-          
-          // Deployment and general inputs are always relevant
-          html += `
+				}
+
+				// Deployment and general inputs are always relevant
+				html += `
           <div class="form-section" style="padding: 1.5rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px;">
               <h4 style="color: #fff; margin-top: 0; margin-bottom: 1rem;">Infrastructure Targets</h4>
               <div class="form-group">
@@ -649,168 +1292,186 @@
                   </div>
               </div>
           </div>`;
-          
-          container.innerHTML = html;
-      }
 
-      document.getElementById('quote-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        if (!validateStep(5)) return;
+				container.innerHTML = html;
+			}
 
-        document.getElementById('step-5').classList.remove('active');
-        document.getElementById('step-6').classList.add('active'); 
-        updateProgressLines(6);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        
-        document.getElementById('ai-progress-container').style.display = 'block';
-        
-        const progressBar = document.getElementById('ai-progress-bar');
-        const statusText = document.getElementById('ai-status-text');
-        
-        currentStateIndex = 0;
-        heartbeatInterval = setInterval(() => {
-          if (currentStateIndex < states.length) {
-            progressBar.style.width = states[currentStateIndex].progress;
-            statusText.textContent = states[currentStateIndex].text;
-            currentStateIndex++;
-          }
-        }, 3000);
+			document
+				.getElementById("quote-form")
+				.addEventListener("submit", async function (e) {
+					e.preventDefault();
+					if (!validateStep(5)) return;
 
-        const formEl = document.getElementById('quote-form');
-        const submitFormData = new FormData(formEl);
-        
-        for (const [key, value] of submitFormData.entries()) {
-          baseFormDataObj[key] = value;
-        }
+					document.getElementById("step-5").classList.remove("active");
+					document.getElementById("step-6").classList.add("active");
+					updateProgressLines(6);
+					window.scrollTo({ top: 0, behavior: "smooth" });
 
-        try {
-          const clarifyResponse = await fetch('/api/clarify', {
-            method: 'POST',
-            body: submitFormData
-          });
-          
-          clearInterval(heartbeatInterval);
-          progressBar.style.width = '45%';
-          
-          if (!clarifyResponse.ok) throw new Error('Clarify API failed.');
-          
-          const clarifyData = await clarifyResponse.json();
-          const questions = clarifyData.questions || [];
+					document.getElementById("ai-progress-container").style.display =
+						"block";
 
-          if (questions.length === 0) {
-            statusText.textContent = "Scope defined perfectly. Generating quote...";
-            executeFinalQuote(submitFormData);
-          } else {
-            document.getElementById('ai-progress-title').textContent = "Clarifications Needed";
-            statusText.textContent = "Our AI Architect needs a few more details to map your infrastructure.";
-            document.getElementById('loading-bar-wrapper').style.display = 'none';
-            
-            const qaWrapper = document.getElementById('qa-questions-wrapper');
-            qaWrapper.innerHTML = '';
-            
-            questions.forEach((q, i) => {
-              qaWrapper.innerHTML += `
+					const progressBar = document.getElementById("ai-progress-bar");
+					const statusText = document.getElementById("ai-status-text");
+
+					currentStateIndex = 0;
+					heartbeatInterval = setInterval(() => {
+						if (currentStateIndex < states.length) {
+							progressBar.style.width = states[currentStateIndex].progress;
+							statusText.textContent = states[currentStateIndex].text;
+							currentStateIndex++;
+						}
+					}, 3000);
+
+					const formEl = document.getElementById("quote-form");
+					const submitFormData = new FormData(formEl);
+
+					for (const [key, value] of submitFormData.entries()) {
+						baseFormDataObj[key] = value;
+					}
+
+					try {
+						const clarifyResponse = await fetch("/api/clarify", {
+							method: "POST",
+							body: submitFormData,
+						});
+
+						clearInterval(heartbeatInterval);
+						progressBar.style.width = "45%";
+
+						if (!clarifyResponse.ok) throw new Error("Clarify API failed.");
+
+						const clarifyData = await clarifyResponse.json();
+						const questions = clarifyData.questions || [];
+
+						if (questions.length === 0) {
+							statusText.textContent =
+								"Scope defined perfectly. Generating quote...";
+							executeFinalQuote(submitFormData);
+						} else {
+							document.getElementById("ai-progress-title").textContent =
+								"Clarifications Needed";
+							statusText.textContent =
+								"Our AI Architect needs a few more details to map your infrastructure.";
+							document.getElementById("loading-bar-wrapper").style.display =
+								"none";
+
+							const qaWrapper = document.getElementById("qa-questions-wrapper");
+							qaWrapper.innerHTML = "";
+
+							questions.forEach((q, i) => {
+								qaWrapper.innerHTML += `
                 <div class="card card--glass" style="margin-bottom: 2rem; padding: 1.5rem; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2);">
-                  <label class="form-label" style="color: #4ade80; font-size: 1.05rem; margin-bottom: 1rem; display: block;">Q${i+1}: ${q}</label>
+                  <label class="form-label" style="color: #4ade80; font-size: 1.05rem; margin-bottom: 1rem; display: block;">Q${i + 1}: ${q}</label>
                   <textarea id="qa_${i}" class="form-input" placeholder="Your answer..." required style="min-height: 80px;"></textarea>
                   <input type="hidden" id="qa_question_${i}" value="${q}">
                 </div>
               `;
-            });
-            
-            document.getElementById('ai-qa-container').style.display = 'block';
-          }
-        } catch (error) {
-          clearInterval(heartbeatInterval);
-          statusText.textContent = "An error occurred validating the scope. Please try again.";
-        }
-      });
-      
-      window.submitFinalAnswersAndQuote = function() {
-        let isValid = true;
-        document.getElementById('qa-questions-wrapper').querySelectorAll('textarea[required]').forEach(input => {
-          if (!input.value.trim()) {
-            isValid = false;
-            input.reportValidity();
-          }
-        });
-        
-        if (!isValid) return;
+							});
 
-        document.getElementById('ai-qa-container').style.display = 'none';
-        document.getElementById('ai-progress-title').textContent = "Synthesizing Architecture...";
-        document.getElementById('loading-bar-wrapper').style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        
-        const progressBar = document.getElementById('ai-progress-bar');
-        const statusText = document.getElementById('ai-status-text');
-        
-        currentStateIndex = 0;
-        heartbeatInterval = setInterval(() => {
-          if (currentStateIndex < quoteStates.length) {
-            progressBar.style.width = quoteStates[currentStateIndex].progress;
-            statusText.textContent = quoteStates[currentStateIndex].text;
-            currentStateIndex++;
-          }
-        }, 5000);
+							document.getElementById("ai-qa-container").style.display =
+								"block";
+						}
+					} catch (error) {
+						clearInterval(heartbeatInterval);
+						statusText.textContent =
+							"An error occurred validating the scope. Please try again.";
+					}
+				});
 
-        const qaHistory = [];
-        let i = 0;
-        while (document.getElementById(`qa_${i}`)) {
-          qaHistory.push({
-            question: document.getElementById(`qa_question_${i}`).value,
-            answer: document.getElementById(`qa_${i}`).value
-          });
-          i++;
-        }
-        
-        const finalPayload = new FormData();
-        Object.keys(baseFormDataObj).forEach(key => finalPayload.append(key, baseFormDataObj[key]));
-        finalPayload.append('qa_history', JSON.stringify(qaHistory));
-        
-        executeFinalQuote(finalPayload);
-      };
+			window.submitFinalAnswersAndQuote = function () {
+				let isValid = true;
+				document
+					.getElementById("qa-questions-wrapper")
+					.querySelectorAll("textarea[required]")
+					.forEach((input) => {
+						if (!input.value.trim()) {
+							isValid = false;
+							input.reportValidity();
+						}
+					});
 
-      async function executeFinalQuote(finalPayload) {
-        try {
-          const response = await fetch('/api/quote', {
-            method: 'POST',
-            body: finalPayload
-          });
+				if (!isValid) return;
 
-          const reader = response.body.getReader();
-          const decoder = new TextDecoder('utf-8');
-          let finalJsonStr = '';
+				document.getElementById("ai-qa-container").style.display = "none";
+				document.getElementById("ai-progress-title").textContent =
+					"Synthesizing Architecture...";
+				document.getElementById("loading-bar-wrapper").style.display = "block";
+				window.scrollTo({ top: 0, behavior: "smooth" });
 
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            
-            const chunk = decoder.decode(value, { stream: true });
-            // Only accumulate chunks that are JSON-like (not the heartbeat spaces)
-            const trimmed = chunk.trim();
-            if (trimmed !== '') finalJsonStr += trimmed;
-          }
+				const progressBar = document.getElementById("ai-progress-bar");
+				const statusText = document.getElementById("ai-status-text");
 
-          clearInterval(heartbeatInterval);
-          document.getElementById('ai-progress-bar').style.width = '100%';
-          document.getElementById('ai-status-text').textContent = "Hardware configured.";
-          
-          try {
-            const quoteData = JSON.parse(finalJsonStr);
-            if (quoteData.error) {
-              document.getElementById('ai-status-text').style.color = '#ef4444';
-              document.getElementById('ai-status-text').textContent = "Generation failed: " + quoteData.error;
-              return;
-            }
+				currentStateIndex = 0;
+				heartbeatInterval = setInterval(() => {
+					if (currentStateIndex < quoteStates.length) {
+						progressBar.style.width = quoteStates[currentStateIndex].progress;
+						statusText.textContent = quoteStates[currentStateIndex].text;
+						currentStateIndex++;
+					}
+				}, 5000);
 
-            document.getElementById('step-6').style.display = 'none';
-            document.getElementById('ai-progress-container').style.display = 'none';
-            document.getElementById('quote-form').style.display = 'none';
-            document.getElementById('quote-results').style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+				const qaHistory = [];
+				let i = 0;
+				while (document.getElementById(`qa_${i}`)) {
+					qaHistory.push({
+						question: document.getElementById(`qa_question_${i}`).value,
+						answer: document.getElementById(`qa_${i}`).value,
+					});
+					i++;
+				}
 
-            const contentHtml = `
+				const finalPayload = new FormData();
+				Object.keys(baseFormDataObj).forEach((key) =>
+					finalPayload.append(key, baseFormDataObj[key]),
+				);
+				finalPayload.append("qa_history", JSON.stringify(qaHistory));
+
+				executeFinalQuote(finalPayload);
+			};
+
+			async function executeFinalQuote(finalPayload) {
+				try {
+					const response = await fetch("/api/quote", {
+						method: "POST",
+						body: finalPayload,
+					});
+
+					const reader = response.body.getReader();
+					const decoder = new TextDecoder("utf-8");
+					let finalJsonStr = "";
+
+					while (true) {
+						const { done, value } = await reader.read();
+						if (done) break;
+
+						const chunk = decoder.decode(value, { stream: true });
+						// Only accumulate chunks that are JSON-like (not the heartbeat spaces)
+						const trimmed = chunk.trim();
+						if (trimmed !== "") finalJsonStr += trimmed;
+					}
+
+					clearInterval(heartbeatInterval);
+					document.getElementById("ai-progress-bar").style.width = "100%";
+					document.getElementById("ai-status-text").textContent =
+						"Hardware configured.";
+
+					try {
+						const quoteData = JSON.parse(finalJsonStr);
+						if (quoteData.error) {
+							document.getElementById("ai-status-text").style.color = "#ef4444";
+							document.getElementById("ai-status-text").textContent =
+								"Generation failed: " + quoteData.error;
+							return;
+						}
+
+						document.getElementById("step-6").style.display = "none";
+						document.getElementById("ai-progress-container").style.display =
+							"none";
+						document.getElementById("quote-form").style.display = "none";
+						document.getElementById("quote-results").style.display = "block";
+						window.scrollTo({ top: 0, behavior: "smooth" });
+
+						const contentHtml = `
               <div class="card card--glass" style="padding: 2rem; margin-bottom: 1.5rem; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2);">
                 <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                   <div>
@@ -843,48 +1504,54 @@
                 </div>
               </div>
             `;
-            document.getElementById('quote-content').innerHTML = contentHtml;
-            
-          } catch(e) {
-            console.error("Parse Error:", e);
-            document.getElementById('ai-status-text').style.color = '#ef4444';
-            document.getElementById('ai-status-text').textContent = "Data pipeline failed to align. We've been notified.";
-          }
-        } catch (error) {
-          clearInterval(heartbeatInterval);
-          console.error("Pipeline Error:", error);
-          document.getElementById('ai-status-text').style.color = '#ef4444';
-          document.getElementById('ai-status-text').textContent = "An error occurred generating the architecture. Please try again.";
-        }
-      }
+						document.getElementById("quote-content").innerHTML = contentHtml;
+					} catch (e) {
+						console.error("Parse Error:", e);
+						document.getElementById("ai-status-text").style.color = "#ef4444";
+						document.getElementById("ai-status-text").textContent =
+							"Data pipeline failed to align. We've been notified.";
+					}
+				} catch (error) {
+					clearInterval(heartbeatInterval);
+					console.error("Pipeline Error:", error);
+					document.getElementById("ai-status-text").style.color = "#ef4444";
+					document.getElementById("ai-status-text").textContent =
+						"An error occurred generating the architecture. Please try again.";
+				}
+			}
 
-      window.toggleEntityFields = function(val) {
-        const sizeContainer = document.getElementById('entity_size_container');
-        const companyContainer = document.getElementById('company_container');
-        const companyInput = document.getElementById('company');
+			window.toggleEntityFields = function (val) {
+				const sizeContainer = document.getElementById("entity_size_container");
+				const companyContainer = document.getElementById("company_container");
+				const companyInput = document.getElementById("company");
 
-        if (val === 'personal') {
-          if(sizeContainer) sizeContainer.style.display = 'none';
-          if(companyContainer) companyContainer.style.display = 'none';
-          if(companyInput) {
-             companyInput.required = false;
-             companyInput.disabled = true;
-          }
-        } else {
-          if(companyContainer) companyContainer.style.display = 'block';
-          if(companyInput) {
-             companyInput.required = true;
-             companyInput.disabled = false;
-          }
-          if(sizeContainer) {
-            if (val === 'startup' || val === 'enterprise' || val === 'nonprofit' || val === 'education') {
-               sizeContainer.style.display = 'block';
-            } else {
-               sizeContainer.style.display = 'none';
-            }
-          }
-        }
-      };
-    </script>
-</body>
+				if (val === "personal") {
+					if (sizeContainer) sizeContainer.style.display = "none";
+					if (companyContainer) companyContainer.style.display = "none";
+					if (companyInput) {
+						companyInput.required = false;
+						companyInput.disabled = true;
+					}
+				} else {
+					if (companyContainer) companyContainer.style.display = "block";
+					if (companyInput) {
+						companyInput.required = true;
+						companyInput.disabled = false;
+					}
+					if (sizeContainer) {
+						if (
+							val === "startup" ||
+							val === "enterprise" ||
+							val === "nonprofit" ||
+							val === "education"
+						) {
+							sizeContainer.style.display = "block";
+						} else {
+							sizeContainer.style.display = "none";
+						}
+					}
+				}
+			};
+		</script>
+	</body>
 </html>
