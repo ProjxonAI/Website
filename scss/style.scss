@@ -147,13 +147,15 @@
 
 // CTA Section
 .cta {
-  background: transparent;
+  background: $bg-dark-secondary;
   color: $text-inverse;
-  border-radius: $radius-xl;
+  border-radius: 0;
   padding: $space-16 0;
   text-align: center;
   position: relative;
   overflow: hidden;
+  border-top: 1px solid rgba(74, 222, 128, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   
   @include respond-to(md) {
     padding: $space-20 $space-12;
@@ -423,7 +425,6 @@
   padding-top: 72px;
 
   &__hero {
-    min-height: 70vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -431,7 +432,7 @@
     text-align: center;
     max-width: 900px;
     margin: 0 auto;
-    padding: $space-16 0 $space-16;
+    padding: $space-24 0 $space-20;
     position: relative;
     z-index: 1;
   }
@@ -577,7 +578,7 @@
     padding: $space-8;
     background: rgba(255, 255, 255, 0.025);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: $radius-xl;
+    border-radius: $radius-md;
     transition: border-color $transition-base;
 
     &:hover {
@@ -632,7 +633,7 @@
 // PROCESS TIMELINE (About page)
 // ===================================
 .process-section {
-  background: #0b0b0f;
+  background: $bg-dark-secondary;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   padding: $space-20 0 $space-24;

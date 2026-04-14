@@ -38,7 +38,7 @@ body {
 }
 
 .page--dark {
-	background-color: #050505;
+	background-color: $bg-dark;
 	background-image: radial-gradient(ellipse 100% 45% at 50% 0%, rgba(74, 222, 128, 0.1) 0%, transparent 70%);
 	position: relative;
 

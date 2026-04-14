@@ -21,7 +21,7 @@
   font-size: $font-size-base;
   font-weight: $font-weight-medium;
   line-height: 1;
-  border-radius: 99px;
+  border-radius: $radius-md;
   transition: all $transition-base;
   cursor: pointer;
   white-space: nowrap;
@@ -48,53 +48,42 @@
     }
   }
   
-  // Secondary Button
+  // Secondary Button — transparent with white border (dark-mode)
   &--secondary {
-    background-color: $bg-secondary;
-    color: $text-primary;
-    border: 1px solid $border-light;
-    
-    &:hover:not(:disabled) {
-      background-color: $neutral-100;
-      border-color: $border-medium;
-      color: $text-primary;
-    }
-  }
-  
-  // Outline Button
-  &--outline {
     background-color: transparent;
-    color: $primary-base;
-    border: 1.5px solid rgba($primary-base, 0.9);
-    
-    &:hover:not(:disabled) {
-      background-color: rgba($primary-base, 0.08);
-      color: $primary-dark;
-      border-color: $primary-dark;
-    }
-  }
-  
-  // Ghost Button
-  &--ghost {
-    background-color: transparent;
-    color: $text-secondary;
-    border: 1px solid transparent;
-    
-    &:hover:not(:disabled) {
-      color: $text-primary;
-      border-color: $border-light;
-      background-color: rgba($neutral-100, 0.6);
-    }
-  }
-  &--ghost-light {
-    background-color: rgba(255, 255, 255, 0.03); // Slight base background
-    color: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.15); // Visible border
-    
+    color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
     &:hover:not(:disabled) {
       color: $text-inverse;
-      background-color: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.25);
+      background-color: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+  }
+
+  // Ghost-light — same as secondary for compatibility
+  &--ghost-light {
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    &:hover:not(:disabled) {
+      color: $text-inverse;
+      background-color: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+  }
+
+  // Ghost — same as secondary for dark backgrounds
+  &--ghost {
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    &:hover:not(:disabled) {
+      color: $text-inverse;
+      background-color: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.35);
     }
   }
   
@@ -116,7 +105,7 @@
 .card {
   background-color: $bg-primary;
   border: 1px solid $border-light;
-  border-radius: $radius-lg;
+  border-radius: $radius-md;
   padding: $space-6;
   transition: border-color $transition-base, box-shadow $transition-base, transform $transition-base;
   box-shadow: $shadow-xs;
@@ -234,7 +223,7 @@
   &__photo {
     width: 100%;
     padding-top: 70%;
-    border-radius: $radius-lg;
+    border-radius: $radius-md;
     background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), rgba(74, 222, 128, 0.12));
     position: relative;
     overflow: hidden;
@@ -407,7 +396,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: $bg-primary;
+  background-color: $bg-dark;
   padding: $space-6;
   transform: translateX(100%);
   transition: transform $transition-base;
@@ -431,12 +420,13 @@
   &__link {
     display: block;
     padding: $space-4;
-    color: $text-primary;
+    color: rgba(255, 255, 255, 0.8);
     font-weight: $font-weight-medium;
     border-radius: $radius-base;
-    
+
     &:hover {
-      background-color: $bg-secondary;
+      color: $text-inverse;
+      background-color: rgba(255, 255, 255, 0.07);
     }
   }
   
@@ -626,7 +616,7 @@
     width: 64px;
     height: 64px;
     padding-top: 0;
-    border-radius: $radius-xl;
+    border-radius: $radius-md;
     background: linear-gradient(135deg, rgba(74, 222, 128, 0.15), rgba(74, 222, 128, 0.05));
     border: 1px solid rgba(74, 222, 128, 0.2);
     display: flex;
@@ -642,18 +632,11 @@
     position: relative;
     overflow: hidden;
     padding: $space-24 0;
+    background: $bg-dark-secondary;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   }
 
-  .btn--ghost {
-    font-size: $font-size-sm;
-    color: rgba(255, 255, 255, 0.6);
-    padding: $space-2 $space-4;
-    
-    &:hover {
-      color: $text-inverse;
-      background-color: rgba(255, 255, 255, 0.06);
-    }
-  }
 }
 
 
@@ -865,7 +848,7 @@
   padding: $space-8;
   background: rgba(255, 255, 255, 0.025);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: $radius-xl;
+  border-radius: $radius-md;
   transition: all $transition-base;
   height: 100%;
   display: flex;
@@ -908,7 +891,7 @@
   padding: $space-10;
   background: rgba(255, 255, 255, 0.015);
   border-left: 3px solid $accent-cyan;
-  border-radius: 0 $radius-xl $radius-xl 0;
+  border-radius: 0 $radius-md $radius-md 0;
   max-width: 850px;
   
   &--centered {
@@ -964,8 +947,9 @@
   padding: $space-10 $space-8;
   background: rgba(255, 255, 255, 0.025);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: $radius-xl;
+  border-radius: $radius-md;
   height: 100%;
+  text-align: left;
 
   &__title {
     font-size: $font-size-lg;
@@ -1039,8 +1023,6 @@
     font-weight: $font-weight-bold;
     margin-bottom: $space-2;
     display: block;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
   }
   
   &__text {
@@ -1115,8 +1097,6 @@ textarea.form-input {
     font-size: $font-size-lg;
     font-weight: $font-weight-bold;
     margin-bottom: $space-6;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
   }
 }
 
