@@ -9,7 +9,7 @@
 @use 'components';
 
 // Import Google Fonts
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 // ===================================
 // PAGE-SPECIFIC STYLES
@@ -535,7 +535,8 @@
     max-width: 920px;
     margin: 0 auto;
     text-align: center;
-    padding: $space-12 0 $space-20;
+    padding: $space-20 0 $space-20;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
   }
 
   &__section-heading {
@@ -597,6 +598,7 @@
     margin: 0 auto;
     text-align: center;
     padding: $space-24 0 $space-20;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
   }
 }
 
@@ -618,7 +620,9 @@
 // PROCESS TIMELINE (About page)
 // ===================================
 .process-section {
-  background: #050505;
+  background: #0b0b0f;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   padding: $space-20 0 $space-24;
 
   &__inner {
@@ -685,15 +689,14 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border: 1px solid rgba(56, 189, 248, 0.2);
-    background: rgba(56, 189, 248, 0.04);
-    backdrop-filter: blur(8px);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    background: rgba(74, 222, 128, 0.04);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: $font-size-sm;
     font-weight: $font-weight-bold;
-    color: rgba(186, 230, 253, 0.5);
+    color: rgba(134, 239, 172, 0.6);
     letter-spacing: 0.05em;
     margin-bottom: $space-5;
     flex-shrink: 0;
@@ -702,7 +705,7 @@
   &__title {
     font-size: $font-size-base;
     font-weight: $font-weight-semibold;
-    color: $text-primary;
+    color: $text-inverse;
     margin-bottom: $space-2;
     letter-spacing: -0.01em;
   }
