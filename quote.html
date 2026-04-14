@@ -85,10 +85,10 @@
               transition: background 0.3s ease;
             }
             .wizard-progress__dot.active {
-              background: #38bdf8;
+              background: #4ade80;
             }
             .wizard-progress__dot.completed {
-              background: rgba(56, 189, 248, 0.5);
+              background: rgba(74, 222, 128, 0.4);
             }
             .wizard-nav {
               display: flex;
@@ -257,7 +257,7 @@
                 <h3 class="gradient-text" style="font-size: 2rem; margin-bottom: 1rem;">Analyzing Requirements...</h3>
                 <p style="color: rgba(255,255,255,0.7); font-size: 1.1rem;">Our AI Architect is evaluating your description to determine the specific infrastructure you need.</p>
                 <div style="margin: 2rem auto; max-width: 400px; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; position: relative;">
-                  <div style="position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: #38bdf8; animation: slideProgress 2s infinite ease-in-out; border-radius: 4px;"></div>
+                  <div style="position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: #4ade80; animation: slideProgress 2s infinite ease-in-out; border-radius: 4px;"></div>
                 </div>
                 <style>
                   @keyframes slideProgress {
@@ -334,7 +334,7 @@
                 <h3 class="gradient-text" style="font-size: 2rem; margin-bottom: 1rem;" id="ai-progress-title">Reviewing Architecture...</h3>
                 <p id="ai-status-text" style="color: rgba(255,255,255,0.7); font-size: 1.1rem;">Our AI Architect is running a final review of your requirements.</p>
                 <div id="loading-bar-wrapper" style="margin: 2rem auto; max-width: 400px; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; position: relative;">
-                  <div id="ai-progress-bar" style="position: absolute; top: 0; left: 0; height: 100%; width: 5%; background: #38bdf8; transition: width 0.5s ease; border-radius: 4px;"></div>
+                  <div id="ai-progress-bar" style="position: absolute; top: 0; left: 0; height: 100%; width: 5%; background: #4ade80; transition: width 0.5s ease; border-radius: 4px;"></div>
                 </div>
               </div>
 
@@ -548,7 +548,7 @@
           if (routing.needs_custom_model) {
               html += `
               <div class="form-section" style="padding: 1.5rem; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; margin-bottom: 2rem;">
-                  <h4 style="color: #38bdf8; margin-top: 0; margin-bottom: 1rem;">Custom Model & Training</h4>
+                  <h4 style="color: #4ade80; margin-top: 0; margin-bottom: 1rem;">Custom Model & Training</h4>
                   <div class="form-group">
                       <label class="form-label">Training Data Availability</label>
                       <div class="form-checkbox-group">
@@ -711,7 +711,7 @@
             questions.forEach((q, i) => {
               qaWrapper.innerHTML += `
                 <div class="card card--glass" style="margin-bottom: 2rem; padding: 1.5rem; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2);">
-                  <label class="form-label" style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 1rem; display: block;">Q${i+1}: ${q}</label>
+                  <label class="form-label" style="color: #4ade80; font-size: 1.05rem; margin-bottom: 1rem; display: block;">Q${i+1}: ${q}</label>
                   <textarea id="qa_${i}" class="form-input" placeholder="Your answer..." required style="min-height: 80px;"></textarea>
                   <input type="hidden" id="qa_question_${i}" value="${q}">
                 </div>
@@ -814,7 +814,7 @@
               <div class="card card--glass" style="padding: 2rem; margin-bottom: 1.5rem; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2);">
                 <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                   <div>
-                    <span style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #38bdf8; font-weight: 600;">Estimated Setup</span>
+                    <span style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #4ade80; font-weight: 600;">Estimated Setup</span>
                     <div style="font-size: 2.5rem; font-weight: 700; color: #fff; line-height: 1;">${quoteData.one_time_cost}</div>
                   </div>
                   <div style="text-align: right;">
@@ -830,15 +830,15 @@
 
               <div class="grid grid--3" style="gap: 1.5rem; margin-bottom: 2rem;">
                 <div class="card" style="padding: 1.5rem; background: rgba(255,255,255,0.02);">
-                  <div style="font-weight: 600; color: #38bdf8; margin-bottom: 0.5rem;">Target Approach</div>
+                  <div style="font-weight: 600; color: #4ade80; margin-bottom: 0.5rem;">Target Approach</div>
                   <p style="font-size: 0.9rem; margin: 0;">${quoteData.itemized_sheet.training_methods}</p>
                 </div>
                 <div class="card" style="padding: 1.5rem; background: rgba(255,255,255,0.02);">
-                  <div style="font-weight: 600; color: #38bdf8; margin-bottom: 0.5rem;">Data Operations</div>
+                  <div style="font-weight: 600; color: #4ade80; margin-bottom: 0.5rem;">Data Operations</div>
                   <p style="font-size: 0.9rem; margin: 0;">${quoteData.itemized_sheet.data_processing}</p>
                 </div>
                 <div class="card" style="padding: 1.5rem; background: rgba(255,255,255,0.02);">
-                  <div style="font-weight: 600; color: #38bdf8; margin-bottom: 0.5rem;">Infrastructure Pipeline</div>
+                  <div style="font-weight: 600; color: #4ade80; margin-bottom: 0.5rem;">Infrastructure Pipeline</div>
                   <p style="font-size: 0.9rem; margin: 0;">${quoteData.itemized_sheet.deployment}</p>
                 </div>
               </div>
