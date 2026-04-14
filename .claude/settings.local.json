@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /Users/hudsongouge/Projects/ProjxonAIWebsite/.claude/worktrees/gallant-ride/*.html)",
+      "Bash(npm run:*)",
+      "Read(//Users/hudsongouge/Projects/ProjxonAIWebsite/css/**)",
+      "Bash(npx serve:*)",
+      "mcp__Claude_Preview__preview_start"
+    ]
+  }
+}
