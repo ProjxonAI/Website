@@ -42,12 +42,14 @@
     display: inline-flex;
     align-items: center;
     gap: $space-2;
-    padding: $space-2 $space-4;
-    background-color: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
+    padding: 0.25rem 0.875rem;
+    background-color: rgba(74, 222, 128, 0.08);
+    color: $accent-cyan;
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     border-radius: $radius-full;
     margin-bottom: $space-6;
     animation: fadeInUp 0.6s ease-out;
@@ -145,13 +147,15 @@
 
 // CTA Section
 .cta {
-  background: transparent;
+  background: $bg-dark-secondary;
   color: $text-inverse;
-  border-radius: $radius-xl;
+  border-radius: 0;
   padding: $space-16 0;
   text-align: center;
   position: relative;
   overflow: hidden;
+  border-top: 1px solid rgba(74, 222, 128, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   
   @include respond-to(md) {
     padding: $space-20 $space-12;
@@ -421,7 +425,6 @@
   padding-top: 72px;
 
   &__hero {
-    min-height: 85vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -429,7 +432,7 @@
     text-align: center;
     max-width: 900px;
     margin: 0 auto;
-    padding: $space-16 0 $space-24;
+    padding: $space-24 0 $space-20;
     position: relative;
     z-index: 1;
   }
@@ -469,9 +472,9 @@
     transform: translate(-50%, -50%);
     width: 700px;
     height: 700px;
-    background: radial-gradient(circle, rgba(74, 222, 128, 0.07) 0%, rgba(34, 197, 94, 0.04) 40%, rgba(255,255,255,0) 70%);
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.07) 0%, rgba(14, 165, 233, 0.04) 40%, rgba(255,255,255,0) 70%);
     filter: blur(90px);
-    z-index: -5;
+    z-index: -5; // Ensured it is deep behind all content
     pointer-events: none;
     animation: pulseOrb 8s ease-in-out infinite alternate;
   }
@@ -572,9 +575,19 @@
   }
 
   &__feature {
+    padding: $space-8;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: $radius-md;
+    transition: border-color $transition-base;
+
+    &:hover {
+      border-color: rgba(74, 222, 128, 0.25);
+    }
+
     svg {
-      color: $primary-light;
-      margin-bottom: $space-4;
+      color: $accent-cyan;
+      margin-bottom: $space-5;
       display: block;
     }
 
@@ -602,16 +615,6 @@
   }
 }
 
-// Dark page section separation
-.page--dark .section {
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
-  background: #0b0b0f;
-}
-
-.page--dark .cta {
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
-}
-
 // Scroll-reveal animation
 .flow__feature,
 .flow__closing,
@@ -630,7 +633,7 @@
 // PROCESS TIMELINE (About page)
 // ===================================
 .process-section {
-  background: #0b0b0f;
+  background: $bg-dark-secondary;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   padding: $space-20 0 $space-24;
