@@ -1,14 +1,14 @@
-import OpenAI from 'openai';
-import { Resend } from 'resend';
+import OpenAI from "openai";
+import { Resend } from "resend";
 
 // Vercel Edge Runtime configuration
 export const config = {
-  runtime: 'edge',
+	runtime: "edge",
 };
 
 // Initialize clients (these will use environment variables automatically if set on Vercel)
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+	apiKey: process.env.OPENAI_API_KEY,
 });
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -41,7 +41,7 @@ RLVR:
 - Not applicable (subjective creative output).
 DPO Data:
 - Crucial here. The agency team must rank outputs to align the model specifically to their "brand voice".
-Training cost: Mid-tier cloud compute for a 30B-70B model.
+Training cost: ~30B model specially trained on our rig with standard methods and standard architecture.
 Development work: Custom internal web-app with a simple prompt interface.
 Deployment: Managed cloud API.
 Total: $12k – $22k.
@@ -67,139 +67,143 @@ RLVR:
 - Not needed for basic RAG.
 DPO Data:
 - Not needed.
-Training cost: Low cloud compute for a small 8B model. Setup RAG pipeline.
+Training cost: Training a small model on our dedicated hardware with a standard setup. Setup RAG pipeline.
 Development work: Basic RAG integration into their systems.
 Deployment: Cloud API or local depending on their hardware.
-Total: $1,000 – $2,500 depending on specifics.
+Total: $2,500 – $4,500 depending on specifics.
 `;
 
 export default async function handler(req) {
-  if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
-  }
+	if (req.method !== "POST") {
+		return new Response(JSON.stringify({ error: "Method not allowed" }), {
+			status: 405,
+		});
+	}
 
-  try {
-    const reqForm = await req.formData();
-    
-    // Spam Trap: If the hidden honeypot field is filled, silently abort to save LLM costs.
-    if (reqForm.get('contact_last_name_confirm')) {
-      console.log('Honeypot triggered. Aborting quietly.');
-      return new Response(JSON.stringify({ success: true }), { status: 200 });
-    }
-    
-    const formData = {
-      name: reqForm.get('name'),
-      email: reqForm.get('email'),
-      company: reqForm.get('company'),
-      deliverable: reqForm.get('deliverable') || 'Unknown',
-      app_complexity: reqForm.get('app_complexity') || 'N/A',
-      training_type: reqForm.get('training_type') || 'N/A',
-      execution_method: reqForm.get('execution_method') || 'N/A',
-      ai_engine_preference: reqForm.get('ai_engine_preference') || 'N/A',
-      purpose: reqForm.get('purpose'),
-      input_modalities: reqForm.getAll('input_modalities'),
-      output_modalities: reqForm.getAll('output_modalities'),
-      latency: reqForm.get('latency'),
-      deployment: reqForm.get('deployment'),
-      support_tier: reqForm.get('support_tier'),
-      data_status: reqForm.get('data_status'),
-      data_scale: reqForm.get('data_scale'),
-      synthetic_potential: reqForm.get('synthetic_potential'),
-      data_quality: reqForm.get('data_quality'),
-      verifiable: reqForm.get('verifiable'),
-      dpo_willingness: reqForm.get('dpo_willingness'),
-      additional_info: reqForm.get('additional_info'),
-      rag_format: reqForm.get('rag_format'),
-      automation_tools: reqForm.get('automation_tools'),
-      email_copy: reqForm.get('email_copy'),
-      current_workflow: reqForm.get('current_workflow'),
-      success_metrics: reqForm.get('success_metrics'),
-      data_freshness: reqForm.get('data_freshness'),
-      compliance_security: reqForm.get('compliance_security'),
-      project_scale: reqForm.get('project_scale') || 'Unknown',
-      // Legacy generic fields mapping
-      entity_type: reqForm.get('entity_type') || 'Unknown',
-      entity_size: reqForm.get('entity_size') || 'Unknown',
-    };
-    
-    // Parse Q&A History
-    let qaHistoryStr = '';
-    try {
-      const qaRaw = reqForm.get('qa_history');
-      if (qaRaw) {
-        const qaArray = JSON.parse(qaRaw);
-        qaArray.forEach((item, i) => {
-          qaHistoryStr += `Q${i+1}: ${item.question}\nA: ${item.answer}\n\n`;
-        });
-      }
-    } catch (e) {
-      console.error("Failed to parse QA history");
-    }
-    
-    // Check if file was uploaded and extract its text content to feed the LLM
-    const file = reqForm.get('data_examples');
-    let fileName = 'None';
-    let fileContentSnippet = 'None provided.';
-    let fileBuffer = null;
-    
-    if (file && file.name) {
-      fileName = file.name;
-      try {
-        fileBuffer = await file.arrayBuffer();
-        const decoder = new TextDecoder('utf-8');
-        const fullText = decoder.decode(fileBuffer);
-        // Take an aggressive 5k char snippet to avoid blowing up the context window
-        fileContentSnippet = fullText.slice(0, 5000); 
-      } catch (err) {
-        console.error("Failed to parse file upload buffer:", err);
-        fileContentSnippet = 'Error reading file content format. Could not process.';
-      }
-    }
+	try {
+		const reqForm = await req.formData();
 
-    // Build exhaustive list of all inputs for the Admin email payload
-    let allInputsHtml = '';
-    for (const [key, value] of reqForm.entries()) {
-      if (key === 'data_examples' || key === 'contact_last_name_confirm') continue;
-      allInputsHtml += `<p><strong>${key}:</strong> ${value}</p>`;
-    }
+		// Spam Trap: If the hidden honeypot field is filled, silently abort to save LLM costs.
+		if (reqForm.get("contact_last_name_confirm")) {
+			console.log("Honeypot triggered. Aborting quietly.");
+			return new Response(JSON.stringify({ success: true }), { status: 200 });
+		}
 
-    // 1. Initial Feasibility Research (GPT-5 with Search)
-    // This block is now redundant and will be replaced by the one inside the stream.
-    // const researchPrompt = `
-    //   You are an elite AI architect at Projxon AI. A potential client wants to build:
-    //   Route: ${formData.project_route}
-    //   Purpose: ${formData.purpose}
-    //   They claim existing models (like GPT-5/Gemini-3) handle it like this: ${formData.existing_models}. Reason: ${formData.model_failure || 'N/A'}.
-      
-    //   AI Q&A Context:
-    //   ${qaHistoryStr || 'None provided.'}
+		const formData = {
+			name: reqForm.get("name"),
+			email: reqForm.get("email"),
+			company: reqForm.get("company"),
+			deliverable: reqForm.get("deliverable") || "Unknown",
+			app_complexity: reqForm.get("app_complexity") || "N/A",
+			training_type: reqForm.get("training_type") || "N/A",
+			execution_method: reqForm.get("execution_method") || "N/A",
+			ai_engine_preference: reqForm.get("ai_engine_preference") || "N/A",
+			purpose: reqForm.get("purpose"),
+			input_modalities: reqForm.getAll("input_modalities"),
+			output_modalities: reqForm.getAll("output_modalities"),
+			latency: reqForm.get("latency"),
+			deployment: reqForm.get("deployment"),
+			support_tier: reqForm.get("support_tier"),
+			data_status: reqForm.get("data_status"),
+			data_scale: reqForm.get("data_scale"),
+			synthetic_potential: reqForm.get("synthetic_potential"),
+			data_quality: reqForm.get("data_quality"),
+			verifiable: reqForm.get("verifiable"),
+			dpo_willingness: reqForm.get("dpo_willingness"),
+			additional_info: reqForm.get("additional_info"),
+			rag_format: reqForm.get("rag_format"),
+			automation_tools: reqForm.get("automation_tools"),
+			email_copy: reqForm.get("email_copy"),
+			current_workflow: reqForm.get("current_workflow"),
+			success_metrics: reqForm.get("success_metrics"),
+			data_freshness: reqForm.get("data_freshness"),
+			compliance_security: reqForm.get("compliance_security"),
+			project_scale: reqForm.get("project_scale") || "Unknown",
+			// Legacy generic fields mapping
+			entity_type: reqForm.get("entity_type") || "Unknown",
+			entity_size: reqForm.get("entity_size") || "Unknown",
+		};
 
-    //   Use your search capability to find existing solutions, feasibility, and technical hurdles for this exact use case.
-    //   IMPORTANT: Only use what you found in the search explicitly. Exclude any results from HuggingFace (HF) as we handle that separately.
-    //   Return a brief technical feasibility assessment.
-    // `;
+		// Parse Q&A History
+		let qaHistoryStr = "";
+		try {
+			const qaRaw = reqForm.get("qa_history");
+			if (qaRaw) {
+				const qaArray = JSON.parse(qaRaw);
+				qaArray.forEach((item, i) => {
+					qaHistoryStr += `Q${i + 1}: ${item.question}\nA: ${item.answer}\n\n`;
+				});
+			}
+		} catch (e) {
+			console.error("Failed to parse QA history");
+		}
 
-    // We return a stream so Vercel Edge doesn't timeout after 25 seconds.
-    const encoder = new TextEncoder();
-    const stream = new ReadableStream({
-      async start(controller) {
-        // Enqueue an immediate whitespace to bypass the TTFB limit
-        controller.enqueue(encoder.encode(' '));
+		// Check if file was uploaded and extract its text content to feed the LLM
+		const file = reqForm.get("data_examples");
+		let fileName = "None";
+		let fileContentSnippet = "None provided.";
+		let fileBuffer = null;
 
-        // Keep the connection alive while the 2-minute LLM runs
-        const heartbeat = setInterval(() => {
-          controller.enqueue(encoder.encode(' '));
-        }, 5000);
+		if (file && file.name) {
+			fileName = file.name;
+			try {
+				fileBuffer = await file.arrayBuffer();
+				const decoder = new TextDecoder("utf-8");
+				const fullText = decoder.decode(fileBuffer);
+				// Take an aggressive 5k char snippet to avoid blowing up the context window
+				fileContentSnippet = fullText.slice(0, 5000);
+			} catch (err) {
+				console.error("Failed to parse file upload buffer:", err);
+				fileContentSnippet =
+					"Error reading file content format. Could not process.";
+			}
+		}
 
-        try {
-          // 1. Initial Feasibility Research (GPT-5 with Search) & 2. HF Search Query Generation
-          const researchPrompt = `
+		// Build exhaustive list of all inputs for the Admin email payload
+		let allInputsHtml = "";
+		for (const [key, value] of reqForm.entries()) {
+			if (key === "data_examples" || key === "contact_last_name_confirm")
+				continue;
+			allInputsHtml += `<p><strong>${key}:</strong> ${value}</p>`;
+		}
+
+		// 1. Initial Feasibility Research (GPT-5 with Search)
+		// This block is now redundant and will be replaced by the one inside the stream.
+		// const researchPrompt = `
+		//   You are an elite AI architect at Projxon AI. A potential client wants to build:
+		//   Route: ${formData.project_route}
+		//   Purpose: ${formData.purpose}
+		//   They claim existing models (like GPT-5/Gemini-3) handle it like this: ${formData.existing_models}. Reason: ${formData.model_failure || 'N/A'}.
+
+		//   AI Q&A Context:
+		//   ${qaHistoryStr || 'None provided.'}
+
+		//   Use your search capability to find existing solutions, feasibility, and technical hurdles for this exact use case.
+		//   IMPORTANT: Only use what you found in the search explicitly. Exclude any results from HuggingFace (HF) as we handle that separately.
+		//   Return a brief technical feasibility assessment.
+		// `;
+
+		// We return a stream so Vercel Edge doesn't timeout after 25 seconds.
+		const encoder = new TextEncoder();
+		const stream = new ReadableStream({
+			async start(controller) {
+				// Enqueue an immediate whitespace to bypass the TTFB limit
+				controller.enqueue(encoder.encode(" "));
+
+				// Keep the connection alive while the 2-minute LLM runs
+				const heartbeat = setInterval(() => {
+					controller.enqueue(encoder.encode(" "));
+				}, 5000);
+
+				try {
+					// 1. Initial Feasibility Research (GPT-5 with Search) & 2. HF Search Query Generation
+					const researchPrompt = `
             You are an elite AI architect at Projxon AI. A potential client wants to build:
             Deliverable Route: ${formData.deliverable}
             Purpose: ${formData.purpose}
             
             AI Q&A Context:
-            ${qaHistoryStr || 'None provided.'}
+            ${qaHistoryStr || "None provided."}
 
             Use your search capability to find:
             1. Existing solutions, feasibility, and technical hurdles for this exact use case.
@@ -207,92 +211,96 @@ export default async function handler(req) {
             
             IMPORTANT: Return a brief technical feasibility assessment. If you found specific HuggingFace datasets, name them explicitly by their ID (e.g., "OpenMed/Medical-Reasoning").
           `;
-          
-          const hfPrompt = `
+
+					const hfPrompt = `
             Based on this use case: "${formData.purpose}". 
             Generate 5 BROAD categorical or tag-based queries I can use to find datasets on HuggingFace. 
             Avoid long phrases. Use single words or short pairings.
             Examples: "medical", "legal document", "finance", "classification", "conversational".
           `;
 
-          // Execute these two independent baseline queries in parallel to speed up the Edge function
-          const [researchResponse, hfQueryResponse] = await Promise.all([
-            openai.responses.create({
-              model: 'gpt-5-mini',
-              input: [{ role: 'user', content: researchPrompt }],
-              tools: [{ type: "web_search" }], // THIS IS REQUIRED!!!
-            }),
-            openai.responses.create({
-              model: 'gpt-5-mini',
-              text: {
-                format: {
-                  type: "json_schema",
-                  name: "hf_queries",
-                  schema: {
-                    type: "object",
-                    properties: {
-                      queries: {
-                        type: "array",
-                        items: { type: "string" }
-                      }
-                    },
-                    required: ["queries"],
-                    additionalProperties: false
-                  },
-                  strict: true
-                }
-              },
-              input: [{ role: 'user', content: hfPrompt }]
-            })
-          ]);
-          
-          const webContext = researchResponse.output_text;
-          let hfQueries = [];
-          try {
-            const hfQueryData = JSON.parse(hfQueryResponse.output_text);
-            hfQueries = hfQueryData.queries || [];
-          } catch (e) {
-            console.error("Failed to parse HF queries structured output:", e);
-            hfQueries = [formData.purpose.slice(0, 50)]; // ultra-fallback
-          }
+					// Execute these two independent baseline queries in parallel to speed up the Edge function
+					const [researchResponse, hfQueryResponse] = await Promise.all([
+						openai.responses.create({
+							model: "gpt-5.4-mini",
+							input: [{ role: "user", content: researchPrompt }],
+							tools: [{ type: "web_search" }], // THIS IS REQUIRED!!!
+						}),
+						openai.responses.create({
+							model: "gpt-5.4-mini",
+							text: {
+								format: {
+									type: "json_schema",
+									name: "hf_queries",
+									schema: {
+										type: "object",
+										properties: {
+											queries: {
+												type: "array",
+												items: { type: "string" },
+											},
+										},
+										required: ["queries"],
+										additionalProperties: false,
+									},
+									strict: true,
+								},
+							},
+							input: [{ role: "user", content: hfPrompt }],
+						}),
+					]);
 
-          // 3. Direct HF API Search
-          const hfDatasets = new Set(); 
-          for (const query of hfQueries) {
-            if (!query || query.trim() === '') continue;
-            try {
-               const controller = new AbortController();
-               const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout so the pipe doesn't hang
-               
-               const hfRes = await fetch(`https://huggingface.co/api/datasets?search=${encodeURIComponent(query.trim())}&limit=5`, {
-                   signal: controller.signal,
-                   headers: {
-                       'User-Agent': 'Projxon-AI-Architect/1.0 (https://projxon.ai; support@projxon.ai)'
-                   }
-               });
-               clearTimeout(timeoutId);
-               
-               if (hfRes.ok) {
-                 const data = await hfRes.json();
-                 if (Array.isArray(data)) {
-                   data.forEach(d => {
-                     if (d.id) hfDatasets.add(d.id);
-                   });
-                 }
-               }
-            } catch (e) {
-               console.error(`HF Search Error for "${query}":`, e.message);
-            }
-          }
-          const finalHfList = Array.from(hfDatasets);
+					const webContext = researchResponse.output_text;
+					let hfQueries = [];
+					try {
+						const hfQueryData = JSON.parse(hfQueryResponse.output_text);
+						hfQueries = hfQueryData.queries || [];
+					} catch (e) {
+						console.error("Failed to parse HF queries structured output:", e);
+						hfQueries = [formData.purpose.slice(0, 50)]; // ultra-fallback
+					}
 
-          // 4. Final Estimation (GPT-5.4)
-          const synthesisPrompt = `
+					// 3. Direct HF API Search
+					const hfDatasets = new Set();
+					for (const query of hfQueries) {
+						if (!query || query.trim() === "") continue;
+						try {
+							const controller = new AbortController();
+							const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout so the pipe doesn't hang
+
+							const hfRes = await fetch(
+								`https://huggingface.co/api/datasets?search=${encodeURIComponent(query.trim())}&limit=5`,
+								{
+									signal: controller.signal,
+									headers: {
+										"User-Agent":
+											"Projxon-AI-Architect/1.0 (https://projxon.ai; support@projxon.ai)",
+									},
+								},
+							);
+							clearTimeout(timeoutId);
+
+							if (hfRes.ok) {
+								const data = await hfRes.json();
+								if (Array.isArray(data)) {
+									data.forEach((d) => {
+										if (d.id) hfDatasets.add(d.id);
+									});
+								}
+							}
+						} catch (e) {
+							console.error(`HF Search Error for "${query}":`, e.message);
+						}
+					}
+					const finalHfList = Array.from(hfDatasets);
+
+					// 4. Final Estimation (GPT-5.4)
+					const synthesisPrompt = `
             You are an elite AI architect at Projxon AI.
             Synthesize this data into a final quote.
 
             CLIENT CONSTRAINTS:
-            - Entity: ${formData.entity_type} (Size: ${formData.entity_size || 'N/A'})
+            - Entity: ${formData.entity_type} (Size: ${formData.entity_size || "N/A"})
             - Expected Project Scale: ${formData.project_scale}
             - Primary Deliverable: ${formData.deliverable}
             - AI Engine Preference (App/Automation): ${formData.ai_engine_preference}
@@ -302,25 +310,25 @@ export default async function handler(req) {
             - Domain: ${formData.purpose}
             
             INTERACTIVE AI Q&A HISTORY:
-            ${qaHistoryStr || 'No clarifying questions were needed.'}
+            ${qaHistoryStr || "No clarifying questions were needed."}
 
-            - Input Modalities: ${formData.input_modalities?.join(', ')}
-            - Output Modalities: ${formData.output_modalities?.join(', ')}
+            - Input Modalities: ${formData.input_modalities?.join(", ")}
+            - Output Modalities: ${formData.output_modalities?.join(", ")}
             - Latency: ${formData.latency}
             - Deployment: ${formData.deployment}
             - Support/Maint: ${formData.support_tier}
-            - Data Status: ${formData.data_status}. Scale: ${formData.data_scale || 'Unknown'}. Quality: ${formData.data_quality}
+            - Data Status: ${formData.data_status}. Scale: ${formData.data_scale || "Unknown"}. Quality: ${formData.data_quality}
             - Synthetic potential from raw unstructured data: ${formData.synthetic_potential}
             - Uploaded Data Example: ${fileName}
             - Programmatically Verifiable (RLVR Potential): ${formData.verifiable}
             - Willing to assist w/ DPO preference pairs (Human Feedback loop): ${formData.dpo_willingness}
-            - RAG Format (if applicable): ${formData.rag_format || 'N/A'}
-            - Automation Tools (if applicable): ${formData.automation_tools || 'N/A'}
-            - Current Workflow / Bottleneck: ${formData.current_workflow || 'N/A'}
-            - Success Metrics (KPIs): ${formData.success_metrics || 'N/A'}
-            - Data Freshness: ${formData.data_freshness || 'N/A'}
-            - Compliance / Security: ${formData.compliance_security || 'N/A'}
-            - Additional Info: ${formData.additional_info || 'None'}
+            - RAG Format (if applicable): ${formData.rag_format || "N/A"}
+            - Automation Tools (if applicable): ${formData.automation_tools || "N/A"}
+            - Current Workflow / Bottleneck: ${formData.current_workflow || "N/A"}
+            - Success Metrics (KPIs): ${formData.success_metrics || "N/A"}
+            - Data Freshness: ${formData.data_freshness || "N/A"}
+            - Compliance / Security: ${formData.compliance_security || "N/A"}
+            - Additional Info: ${formData.additional_info || "None"}
 
             CRITICAL EVALUATION RULES:
             - If "verifiable" is "yes_verifiable", strongly consider RLVR (Reinforcement Learning with Verifiable Rewards) in the training path. If it is subjective, RLVR is impossible.
@@ -334,7 +342,7 @@ export default async function handler(req) {
             ${webContext}
 
             POTENTIAL HF DATASETS FOUND:
-            ${finalHfList.join(', ') || 'None found instantly.'}
+            ${finalHfList.join(", ") || "None found instantly."}
 
             PROMPT EXAMPLES AND INFERENCE TARGETS:
             Use these examples to infer the architectural approach and cost, matching the scale of work:
@@ -345,7 +353,7 @@ export default async function handler(req) {
             {
               "full_internal_analysis": "An unconstrained, highly detailed string explaining exactly how you arrived at these numbers and architectural choices. This is for the engineering team to review.",
               "feasibility_analysis": "Maximum 3 highly concise sentences explaining the architectural approach, whether a frontier model or specialized model is needed, and why.",
-              "one_time_cost": "Total estimated one-time cost, e.g., $30,000",
+              "one_time_cost": "Total estimated one-time cost, e.g., $20,000",
               "recurring_cost": "Total estimated recurring monthly cost, e.g., $2,000/mo",
               "itemized_sheet": {
                 "training_methods": "Specific methods used (SFT, RLVR, Abliteration, DPO).",
@@ -363,55 +371,65 @@ export default async function handler(req) {
             As of March 2026, the general best base models were the Qwen3.5 series.
           `;
 
-          const quoteResponse = await openai.responses.create({
-            model: 'gpt-5.4', 
-            text: { 
-              format: { 
-                type: "json_schema", 
-                name: "quote_schema",
-                schema: { 
-                  type: "object", 
-                  properties: { 
-                    full_internal_analysis: { type: "string" },
-                    feasibility_analysis: { type: "string" },
-                    one_time_cost: { type: "string" },
-                    recurring_cost: { type: "string" },
-                    itemized_sheet: {
-                      type: "object",
-                      properties: {
-                        training_methods: { type: "string" },
-                        data_processing: { type: "string" },
-                        deployment: { type: "string" }
-                      },
-                      required: ["training_methods", "data_processing", "deployment"],
-                      additionalProperties: false
-                    }
-                  },
-                  required: ["full_internal_analysis", "feasibility_analysis", "one_time_cost", "recurring_cost", "itemized_sheet"],
-                  additionalProperties: false
-                },
-                strict: true 
-              } 
-            },
-            input: [{ role: 'user', content: synthesisPrompt }]
-          });
+					const quoteResponse = await openai.responses.create({
+						model: "gpt-5.4",
+						text: {
+							format: {
+								type: "json_schema",
+								name: "quote_schema",
+								schema: {
+									type: "object",
+									properties: {
+										full_internal_analysis: { type: "string" },
+										feasibility_analysis: { type: "string" },
+										one_time_cost: { type: "string" },
+										recurring_cost: { type: "string" },
+										itemized_sheet: {
+											type: "object",
+											properties: {
+												training_methods: { type: "string" },
+												data_processing: { type: "string" },
+												deployment: { type: "string" },
+											},
+											required: [
+												"training_methods",
+												"data_processing",
+												"deployment",
+											],
+											additionalProperties: false,
+										},
+									},
+									required: [
+										"full_internal_analysis",
+										"feasibility_analysis",
+										"one_time_cost",
+										"recurring_cost",
+										"itemized_sheet",
+									],
+									additionalProperties: false,
+								},
+								strict: true,
+							},
+						},
+						input: [{ role: "user", content: synthesisPrompt }],
+					});
 
-          const quoteData = JSON.parse(quoteResponse.output_text);
+					const quoteData = JSON.parse(quoteResponse.output_text);
 
-          // 5. Send Internal Email to Projxon Team via Resend
-          try {
-            const adminEmailPayload = {
-              from: 'quotes@projxon.ai',
-              to: 'admin@projxon.ai',
-              subject: `New AI Quote Lead: ${formData.company || formData.name}`,
-              html: `
+					// 5. Send Internal Email to Projxon Team via Resend
+					try {
+						const adminEmailPayload = {
+							from: "quotes@projxon.ai",
+							to: "admin@projxon.ai",
+							subject: `New AI Quote Lead: ${formData.company || formData.name}`,
+							html: `
                 <h2>New Lead: ${formData.company}</h2>
                 <p><strong>Estimated Scale:</strong> ${formData.project_scale}</p>
                 <h3>--- Full Form Submission Data ---</h3>
                 ${allInputsHtml}
                 <hr/>
                 <h3>--- AI Clarification Q&A Transcript ---</h3>
-                <pre style="white-space: pre-wrap; background: #fef08a; padding: 1rem;">${qaHistoryStr || 'No clarifying questions were needed / bypassed.'}</pre>
+                <pre style="white-space: pre-wrap; background: #fef08a; padding: 1rem;">${qaHistoryStr || "No clarifying questions were needed / bypassed."}</pre>
                 <hr/>
                 <h3>Data Upload File Status</h3>
                 <p><strong>File Name:</strong> ${fileName}</p>
@@ -426,43 +444,43 @@ export default async function handler(req) {
                 <h3>GPT-5.4 Raw Internal Rationale (Unedited)</h3>
                 <pre style="white-space: pre-wrap; background: #e0f2fe; padding: 1rem;">${quoteData.full_internal_analysis}</pre>
                 <h3>Raw LLM Web Research Context</h3>
-                <pre style="white-space: pre-wrap; background: #f4f4f5; padding: 1rem;">${webContext || 'None'}</pre>
+                <pre style="white-space: pre-wrap; background: #f4f4f5; padding: 1rem;">${webContext || "None"}</pre>
                 <h3>HuggingFace Datasets Found</h3>
-                <p>${finalHfList.join(', ') || 'None'}</p>
+                <p>${finalHfList.join(", ") || "None"}</p>
                 <h3>Raw Uploaded Data Sample (Snippet Sent to LLM)</h3>
-                <pre style="white-space: pre-wrap; background: #f4f4f5; padding: 1rem;">${fileContentSnippet || 'None'}</pre>
-              `
-            };
+                <pre style="white-space: pre-wrap; background: #f4f4f5; padding: 1rem;">${fileContentSnippet || "None"}</pre>
+              `,
+						};
 
-            // Attach the full file to the admin email if it exists
-            if (file && file.name && fileBuffer) {
-              const uint8Array = new Uint8Array(fileBuffer);
-              let binary = '';
-              for (let i = 0; i < uint8Array.byteLength; i++) {
-                binary += String.fromCharCode(uint8Array[i]);
-              }
-              const base64Content = btoa(binary);
+						// Attach the full file to the admin email if it exists
+						if (file && file.name && fileBuffer) {
+							const uint8Array = new Uint8Array(fileBuffer);
+							let binary = "";
+							for (let i = 0; i < uint8Array.byteLength; i++) {
+								binary += String.fromCharCode(uint8Array[i]);
+							}
+							const base64Content = btoa(binary);
 
-              adminEmailPayload.attachments = [
-                {
-                  filename: file.name,
-                  content: base64Content
-                }
-              ];
-            }
+							adminEmailPayload.attachments = [
+								{
+									filename: file.name,
+									content: base64Content,
+								},
+							];
+						}
 
-            await resend.emails.send(adminEmailPayload);
+						await resend.emails.send(adminEmailPayload);
 
-            if (formData.email_copy === 'yes' && formData.email) {
-              await resend.emails.send({
-                from: 'quotes@projxon.ai',
-                to: formData.email,
-                subject: 'Your Projxon AI Quote Estimate',
-                html: `
+						if (formData.email_copy === "yes" && formData.email) {
+							await resend.emails.send({
+								from: "quotes@projxon.ai",
+								to: formData.email,
+								subject: "Your Projxon AI Quote Estimate",
+								html: `
                   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2>Your Custom AI Architecture Estimate</h2>
-                    <p>Hi ${formData.name.split(' ')[0]},</p>
-                    <p>Thank you for requesting an estimate from Projxon AI. Based on the requirements for <strong>${formData.company || 'your project'}</strong>, here is our initial pricing and architectural breakdown:</p>
+                    <p>Hi ${formData.name.split(" ")[0]},</p>
+                    <p>Thank you for requesting an estimate from Projxon AI. Based on the requirements for <strong>${formData.company || "your project"}</strong>, here is our initial pricing and architectural breakdown:</p>
                     
                     <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 25px 0;">
                       <h3 style="margin-top: 0; color: #0284c7;">Estimated Cost</h3>
@@ -483,37 +501,39 @@ export default async function handler(req) {
                     <p style="margin-top: 30px;">This is a preliminary AI-generated estimate. Let us know if you'd like to schedule a formal consultation to discuss this architecture in depth.</p>
                     <p style="color: #64748b;">Best,<br>The Projxon AI Team</p>
                   </div>
-                `
-              });
-            }
-          } catch (emailError) {
-            console.error('Failed to send Resend email:', emailError);
-            // We don't fail the user request just because the internal email failed
-          }
+                `,
+							});
+						}
+					} catch (emailError) {
+						console.error("Failed to send Resend email:", emailError);
+						// We don't fail the user request just because the internal email failed
+					}
 
-          clearInterval(heartbeat);
-          controller.enqueue(encoder.encode(JSON.stringify(quoteData)));
-          controller.close();
+					clearInterval(heartbeat);
+					controller.enqueue(encoder.encode(JSON.stringify(quoteData)));
+					controller.close();
+				} catch (error) {
+					clearInterval(heartbeat);
+					console.error("Pipeline Error:", error);
+					controller.enqueue(
+						encoder.encode(JSON.stringify({ error: error.message })),
+					);
+					controller.close();
+				}
+			},
+		});
 
-        } catch (error) {
-          clearInterval(heartbeat);
-          console.error("Pipeline Error:", error);
-          controller.enqueue(encoder.encode(JSON.stringify({ error: error.message })));
-          controller.close();
-        }
-      }
-    });
-
-    return new Response(stream, {
-      status: 200,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache, no-transform'
-      }
-    });
-
-  } catch (error) {
-    console.error('API Error:', error);
-    return new Response(JSON.stringify({ error: 'Failed to generate quote' }), { status: 500 });
-  }
+		return new Response(stream, {
+			status: 200,
+			headers: {
+				"Content-Type": "application/json",
+				"Cache-Control": "no-cache, no-transform",
+			},
+		});
+	} catch (error) {
+		console.error("API Error:", error);
+		return new Response(JSON.stringify({ error: "Failed to generate quote" }), {
+			status: 500,
+		});
+	}
 }
