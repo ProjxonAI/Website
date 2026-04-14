@@ -23,7 +23,7 @@ A complete, production-ready website for Projxon AI featuring:
    - Guiding principles
    - CTA section
 
-4. **Team Page** (`team.html`)
+4. **Team Page** (`team`)
    - Introductions for the founding team
    - Direct email links for each member
    - Culture highlights

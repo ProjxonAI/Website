@@ -5,6 +5,7 @@ Get your website up and running in 5 minutes!
 ## ✅ What's Already Done
 
 Your complete website is ready with:
+
 - ✅ 5 HTML pages (Home, About, Solutions, Contact, 404)
 - ✅ Compiled CSS (15KB minified)
 - ✅ JavaScript functionality
@@ -26,7 +27,7 @@ ProjxonAIWebsite/
 ├── js/
 │   └── main.js             ← JavaScript
 ├── scss/                   ← Source SCSS files
-├── static/assets/          ← Your logo assets
+├── static/asset/          ← Your logo assets
 ├── vercel.json             ← Deployment config
 └── package.json            ← Build scripts
 ```
@@ -38,10 +39,12 @@ ProjxonAIWebsite/
 Open `index.html` in your browser, or use a local server:
 
 **Option A: VS Code Live Server**
+
 - Install "Live Server" extension in VS Code
 - Right-click `index.html` → "Open with Live Server"
 
 **Option B: Python Server**
+
 ```bash
 cd /Users/hudsongouge/Projects/ProjxonAIWebsite
 python3 -m http.server 8000
@@ -49,6 +52,7 @@ python3 -m http.server 8000
 ```
 
 **Option C: Node.js Server**
+
 ```bash
 npx serve .
 ```
@@ -56,6 +60,7 @@ npx serve .
 ### 2. Deploy to Vercel (Recommended)
 
 **Step 1: Initialize Git**
+
 ```bash
 cd /Users/hudsongouge/Projects/ProjxonAIWebsite
 git init
@@ -64,6 +69,7 @@ git commit -m "Initial commit: Projxon AI website"
 ```
 
 **Step 2: Push to GitHub**
+
 ```bash
 # Create a new repository on GitHub, then:
 git branch -M main
@@ -72,6 +78,7 @@ git push -u origin main
 ```
 
 **Step 3: Deploy on Vercel**
+
 1. Go to https://vercel.com
 2. Click "Add New Project"
 3. Import your GitHub repository
@@ -95,11 +102,12 @@ Edit `scss/_variables.scss`:
 
 ```scss
 // Change these values
-$primary-base: #6366f1;        // Your brand color
-$secondary-base: #8b5cf6;      // Complementary color
+$primary-base: #6366f1; // Your brand color
+$secondary-base: #8b5cf6; // Complementary color
 ```
 
 Then rebuild:
+
 ```bash
 npm run build
 ```
@@ -107,6 +115,7 @@ npm run build
 ### Update Content
 
 Simply edit the HTML files:
+
 - `index.html` - Homepage content
 - `about.html` - Company info
 - `solutions.html` - Products/services
@@ -130,11 +139,13 @@ Simply edit the HTML files:
 ## 📝 Important Files
 
 ### Must Read
+
 - `README.md` - Project overview
 - `DEPLOYMENT.md` - Detailed deployment guide
 - `PROJECT_SUMMARY.md` - What was built
 
 ### Reference
+
 - `DESIGN_SYSTEM.md` - Complete design documentation
 - `scss/_variables.scss` - All design tokens
 
@@ -157,11 +168,13 @@ npm install
 ## 🎨 Design System Quick Reference
 
 ### Colors
+
 - Primary: `#6366f1` (Indigo)
 - Secondary: `#8b5cf6` (Purple)
 - Accent: `#06b6d4` (Cyan), `#10b981` (Emerald)
 
 ### Button Classes
+
 ```html
 <button class="btn btn--primary">Primary</button>
 <button class="btn btn--outline">Outline</button>
@@ -169,23 +182,26 @@ npm install
 ```
 
 ### Card Classes
+
 ```html
 <div class="card card--elevated">Card with shadow</div>
 <div class="card card--gradient">Gradient card</div>
 ```
 
 ### Grid Layouts
+
 ```html
 <div class="grid grid--3">
-  <div>Item 1</div>
-  <div>Item 2</div>
-  <div>Item 3</div>
+	<div>Item 1</div>
+	<div>Item 2</div>
+	<div>Item 3</div>
 </div>
 ```
 
 ## 📱 Testing Checklist
 
 Before going live:
+
 - [ ] Test on mobile (Chrome DevTools responsive mode)
 - [ ] Test all navigation links
 - [ ] Verify all images load
@@ -196,16 +212,19 @@ Before going live:
 ## 🐛 Common Issues & Fixes
 
 ### CSS not loading
+
 - Check file path: `/css/style.css`
 - Ensure `npm run build` was run
 - Hard refresh browser (Cmd+Shift+R)
 
 ### Mobile menu not working
+
 - Check that `main.js` is loaded
 - Verify script path: `/js/main.js`
 - Check browser console for errors
 
 ### Fonts not loading
+
 - Google Fonts loaded in CSS
 - Check internet connection
 - Fonts will fallback to system fonts if needed
@@ -213,6 +232,7 @@ Before going live:
 ## 🚀 Performance Tips
 
 Your site is already optimized:
+
 - ✅ Minified CSS (15KB)
 - ✅ Minimal JavaScript (5KB)
 - ✅ No heavy frameworks
@@ -224,12 +244,14 @@ Expected Lighthouse Score: **95-100** across all metrics
 ## 📞 Need Help?
 
 ### Documentation
+
 - `README.md` - Setup and overview
 - `DEPLOYMENT.md` - Deployment guide
 - `DESIGN_SYSTEM.md` - Design reference
 - `PROJECT_SUMMARY.md` - What's included
 
 ### External Resources
+
 - Vercel Docs: https://vercel.com/docs
 - Sass Docs: https://sass-lang.com/documentation
 - MDN Web Docs: https://developer.mozilla.org
@@ -237,12 +259,14 @@ Expected Lighthouse Score: **95-100** across all metrics
 ## ✨ What's Next?
 
 ### Immediate Tasks
+
 1. Preview the site locally
 2. Deploy to Vercel
 3. Add custom domain
 4. Update content with real data
 
 ### Future Enhancements
+
 1. Add analytics (Google Analytics, Plausible)
 2. Create blog section
 3. Add case studies
@@ -254,6 +278,7 @@ Expected Lighthouse Score: **95-100** across all metrics
 Your professional website is ready to go live. The hard work is done - now just deploy and start getting visitors!
 
 **Quick Deploy:**
+
 ```bash
 git init
 git add .
@@ -266,10 +291,10 @@ git commit -m "Initial commit"
 ---
 
 **Need to make changes?**
+
 1. Edit files
 2. Run `npm run build` (if you changed SCSS)
 3. Commit and push
 4. Vercel auto-deploys
 
 **Questions?** Check the documentation files or reach out for support!
-

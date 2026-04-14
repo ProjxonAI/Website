@@ -56,7 +56,7 @@ ProjxonAIWebsite/
 ├── index.html              # Landing page
 ├── about.html              # About page
 ├── solutions.html          # Vision page
-├── team.html               # Team directory
+├── team/index.html               # Team directory
 ├── contact.html            # Contact page
 ├── package.json            # Dependencies and scripts
 ├── vercel.json             # Vercel deployment config
@@ -181,7 +181,7 @@ npm run build
 - **Home** (`index.html`): Launch-focused hero, feature highlights, focus areas, and CTA
 - **About** (`about.html`): Company mission, values, and working principles
 - **Vision** (`solutions.html`): Product direction, roadmap, and guiding rules
-- **Team** (`team.html`): Meet the core team with direct contact info
+- **Team** (`team/index.html`): Meet the core team with direct contact info
 - **Contact** (`contact.html`): Simple instructions to email support@projxon.ai
 
 ## 🤝 Contributing
